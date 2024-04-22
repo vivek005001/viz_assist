@@ -18,8 +18,8 @@ class _HomePageState extends State<HomePage> {
   List mySmartDevices = [
     // [ smartDeviceName, iconPath , powerStatus ]
     ["Use Camera", "lib/icons/camera.png", true],
-    ["Smart AC", "lib/icons/fan.png", false],
-    ["Smart TV", "lib/icons/fan.png", false],
+    ["", "lib/icons/use_camera.png", false],
+    ["", "lib/icons/fan.png", false],
     ["Upload Image", "lib/icons/document.png", false],
   ];
 

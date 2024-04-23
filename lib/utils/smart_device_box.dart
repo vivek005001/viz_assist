@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -8,78 +6,88 @@ class SmartDeviceBox extends StatelessWidget {
   final String smartDeviceName;
   final String iconPath;
   final bool powerOn;
-  void Function(bool)? onChanged;
+  final void Function(bool)? onChanged;
   final int index;
-  SmartDeviceBox(
-      {super.key,
-      required this.smartDeviceName,
-      required this.iconPath,
-      required this.powerOn,
-      required this.onChanged,
-      required this.index});
+  final Color? customColor; // New attribute for custom color
 
-  void Handle(bool b) {
-    print(b);
+  const SmartDeviceBox({
+    super.key, // Added key parameter
+    required this.smartDeviceName,
+    required this.iconPath,
+    required this.powerOn,
+    required this.onChanged,
+    required this.index,
+    this.customColor, // Initialized customColor parameter
+  }); // Calling super constructor with key parameter
+
+  void handle(bool b) {
+    if (onChanged != null) {
+      onChanged!(b);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final double verticalPadding = smartDeviceName.isEmpty ? 30.0 : 40.0;
+
     return Padding(
       padding: const EdgeInsets.all(15.0),
-
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              color: powerOn
-                  ? Colors.grey[900]
-                  : Color.fromARGB(44, 164, 167, 189),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 25.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // icon
-                  Image.asset(
+      child: GestureDetector(
+        onTap: () {
+          if (index == 0 || index == 3) {
+            handle(true);
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: customColor == null // Checking if customColor is provided
+                ? LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                powerOn ? const Color(0xFF4D90A6) : const Color(0xFF539FB8),
+                powerOn ? const Color(0xFF01516C) : const Color(0xFF006789),
+              ],
+            )
+                : null, // Setting gradient to null if customColor is provided
+            color: customColor, // Using customColor if provided
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: verticalPadding),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Image.asset(
                     iconPath,
                     height: (index == 0 || index == 3) ? 65 : 125,
-                    color: powerOn ? Colors.white : Colors.grey.shade700,
+                    color: powerOn ? Colors.white : Colors.white60,
                   ),
-
-                  // smart device name + switch
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 25.0),
-                          child: Text(
-                            smartDeviceName,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: powerOn ? Colors.white : Colors.black,
-                            ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 25.0),
+                        child: Text(
+                          smartDeviceName,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                            color: powerOn ? Colors.white : Colors.white60,
                           ),
                         ),
                       ),
-                      Transform.rotate(
-                        angle: pi / 2,
-                        child: null,
-                      ),
-                    ],
-                  )
-                ],
-              ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
-          onTap: () {
-            // Call the Handle function with your desired boolean value
-            if (index == 0 || index == 3)
-              Handle(true); // You can pass any boolean value here
-          },
-          splashColor: (index == 1 || index == 2)
-              ? Colors.transparent
-              : Color.fromRGBO(123, 125, 125, 100)),
+        ),
+      ),
     );
   }
-}
+  }

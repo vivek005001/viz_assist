@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:viz_assist/utils/smart_device_box.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   // list of smart devices
   List mySmartDevices = [
     // [ smartDeviceName, iconPath , powerStatus ]
-    ["Use Camera", "lib/icons/camera.png", true],
+    ["Use Camera", "lib/icons/camera.png", false],
     ["", "lib/icons/use_camera.png", false],
     ["", "lib/icons/fan.png", false],
     ["Upload Image", "lib/icons/document.png", false],
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: const Color(0xFF0D0D0D),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,14 +51,14 @@ class _HomePageState extends State<HomePage> {
                   Image.asset(
                     'lib/icons/menu.png',
                     height: 45,
-                    color: Colors.grey[800],
+                    // color: Colors.grey[800],
                   ),
 
                   // account icon
-                  Icon(
+                  const Icon(
                     Icons.person,
                     size: 45,
-                    color: Colors.grey[800],
+                    color: Color(0xFF539FB8),
                   )
                 ],
               ),
@@ -74,11 +74,15 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     "Welcome Home,",
-                    style: TextStyle(fontSize: 20, color: Colors.grey.shade800),
+                    style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
                   ),
                   Text(
                     'Mitch Koko',
-                    style: GoogleFonts.bebasNeue(fontSize: 72),
+                    style: TextStyle(
+                      fontFamily: GoogleFonts.bebasNeue().fontFamily,
+                      fontSize: 72,
+                      color: const Color(0xFF4D96AF),
+                    ),
                   ),
                 ],
               ),
@@ -121,13 +125,15 @@ class _HomePageState extends State<HomePage> {
                   childAspectRatio: 1 / 1.3,
                 ),
                 itemBuilder: (context, index) {
+                  // Check if index is 0 or 1, if yes, set transparent color
+                  final color = index == 1 || index == 2 ? Colors.transparent : null;
                   return SmartDeviceBox(
                     smartDeviceName: mySmartDevices[index][0],
                     iconPath: mySmartDevices[index][1],
                     powerOn: mySmartDevices[index][2],
                     onChanged: (value) => powerSwitchChanged(value, index),
-                    index: index, //Type Of Tile either clickable or not
-                    // 0 1 2 3
+                    index: index,
+                    customColor: color,
                   );
                 },
               ),

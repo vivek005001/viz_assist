@@ -4,7 +4,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'chat.dart';
 import 'package:dio/dio.dart';
 
-
 class DetailsPage extends StatefulWidget {
   // requires imagePath
   const DetailsPage({Key? key, required this.imagePath}) : super(key: key);
@@ -28,6 +27,48 @@ class _DetailsPageState extends State<DetailsPage> {
       await flutterTts.setPitch(1.25);
       await flutterTts.speak(text);
     }
+
+    makeRequest() async {
+      // Define the API endpoint
+      String url = 'https://9f7e-34-91-194-123.ngrok-free.app/single_caption';
+
+      // Define the image URL
+      String imageUrl = 'https://tinyjpg.com/images/social/website.jpg';
+
+      // Define headers
+      Options options = Options(
+        headers: {
+          'accept': 'application/json',
+        },
+      );
+
+      // Create Dio instance
+      Dio dio = Dio();
+
+      try {
+        // Make the POST request
+        Response response = await dio.post(
+          url,
+          options: options,
+          queryParameters: {'image_path': imageUrl},
+        );
+
+        // Check if the request was successful (status code 200)
+        if (response.statusCode == 200) {
+          // Get the 'content' part from the response JSON
+          String content = response.data['content'].toString();
+          return content;
+        } else {
+          print('Error: ${response.statusCode}');
+          return null;
+        }
+      } catch (e) {
+        print('Error: $e');
+        return null;
+      }
+    }
+
+
 
     return Scaffold(
         backgroundColor: const Color(0xff121012),
@@ -103,8 +144,12 @@ class _DetailsPageState extends State<DetailsPage> {
                                   width: 10,
                                 ),
                                 InkWell(
-                                  onTap: () => speak(
-                                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nunc. Nulla facilisi. Nullam ac nisi non nisl posuere blandit. Ut sit amet erat sit amet libero lacinia ultricies. Nulla facilisi. Nullam ac nisi non nisl posuere blandit. Ut sit amet erat sit amet libero lacinia ultricies."),
+                                  onTap: () async {
+                                    String? result = await makeRequest();
+                                    if (result != null) {
+                                      speak(result);
+                                    }
+                                  },
                                   child: const Icon(
                                     Icons.volume_up,
                                     color: Colors.white70,

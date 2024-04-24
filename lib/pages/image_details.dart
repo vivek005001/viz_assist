@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -13,12 +14,67 @@ class DetailsPage extends StatefulWidget {
   State<DetailsPage> createState() => _DetailsPageState();
 }
 
+Future<String> encodeImage(String imagePath) async {
+  File imageFile = File(imagePath);
+  List<int> imageBytes = await imageFile.readAsBytes();
+  String encodedString = base64Encode(imageBytes);
+  return encodedString;
+}
+
+Future<String> uploadImage(String imagePath) async {
+  String url = "https://api.imgbb.com/1/upload";
+  String clientApiKey = "61aa016205031b92495bd11ff19b1d44"; // Replace this with your actual client API key
+
+  // Image data (base64 encoded string)
+  String imageData = await encodeImage(imagePath);
+
+  // Request parameters
+  Map<String, dynamic> params = {
+    "expiration": 600,
+    "key": clientApiKey,
+  };
+
+  // Form data
+  FormData formdata = FormData.fromMap({
+    "image": imageData,
+  });
+
+  // Creating Dio instance
+  Dio dio = Dio();
+
+  try {
+    // Making the POST request
+    Response response = await dio.post(
+      url,
+      queryParameters: params,
+      data: formdata,
+    );
+
+    // Printing the response
+    print(response.data);
+
+    Map<String, dynamic> responseData = response.data;
+
+    // Access the 'data' field
+    Map<String, dynamic> data = responseData['data'];
+
+    // Access the 'url' field within the 'data' field
+    String imageUrl = data['url'];
+    print("Image uploaded successfully! at $url");
+    return imageUrl;
+  } catch (e) {
+    print("Error uploading image: $e");
+    return "https://tinyjpg.com/images/social/website.jpg";
+  }
+}
+
 makeRequest(path) async {
   // Define the API endpoint
   String url = 'https://9f7e-34-91-194-123.ngrok-free.app/single_caption';
 
   // Define the image URL
-  String imageUrl = 'https://tinyjpg.com/images/social/website.jpg';
+  String imageUrl = await uploadImage(path);
+  print("Fetching image from: $imageUrl");
 
   // Define headers
   Options options = Options(

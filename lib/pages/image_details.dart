@@ -13,7 +13,7 @@ class DetailsPage extends StatefulWidget {
   State<DetailsPage> createState() => _DetailsPageState();
 }
 
-makeRequest() async {
+makeRequest(path) async {
   // Define the API endpoint
   String url = 'https://9f7e-34-91-194-123.ngrok-free.app/single_caption';
 
@@ -68,7 +68,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   Future<void> _initializeRequest() async {
     // Call your async function here
-    String requestResult = await makeRequest();
+    String requestResult = await makeRequest(widget.imagePath);
     setState(() {
       result = requestResult;
     });
@@ -85,48 +85,6 @@ class _DetailsPageState extends State<DetailsPage> {
       await flutterTts.setPitch(1.25);
       await flutterTts.speak(text);
     }
-
-    makeRequest() async {
-      // Define the API endpoint
-      String url = 'https://9f7e-34-91-194-123.ngrok-free.app/single_caption';
-
-      // Define the image URL
-      String imageUrl = 'https://tinyjpg.com/images/social/website.jpg';
-
-      // Define headers
-      Options options = Options(
-        headers: {
-          'accept': 'application/json',
-        },
-      );
-
-      // Create Dio instance
-      Dio dio = Dio();
-
-      try {
-        // Make the POST request
-        Response response = await dio.post(
-          url,
-          options: options,
-          queryParameters: {'image_path': imageUrl},
-        );
-
-        // Check if the request was successful (status code 200)
-        if (response.statusCode == 200) {
-          // Get the 'content' part from the response JSON
-          String content = response.data['content'].toString();
-          return content;
-        } else {
-          print('Error: ${response.statusCode}');
-          return null;
-        }
-      } catch (e) {
-        print('Error: $e');
-        return null;
-      }
-    }
-
-
 
     return Scaffold(
         backgroundColor: const Color(0xff121012),
@@ -217,10 +175,10 @@ class _DetailsPageState extends State<DetailsPage> {
                           height: 10,
                         ),
                         Padding(
-                            padding: EdgeInsets.only(right: 20),
+                            padding: const EdgeInsets.only(right: 20),
                             child: Text(
                               result,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white38,
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,

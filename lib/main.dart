@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
-import 'package:viz_assist/Pages/camera_page.dart';
+import 'pages/camera_page.dart';
 import 'package:flutter/material.dart';
+import 'pages/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,10 +16,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CameraPage(
-        cameras: cameras,
+      home: HomePage(
       ),
     );
   }

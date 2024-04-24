@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../auth.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();

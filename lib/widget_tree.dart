@@ -7,10 +7,10 @@ class WidgetTree extends StatefulWidget {
   const WidgetTree({Key? key}) : super(key: key);
 
   @override
-  _WidgetTreeState createState() => _WidgetTreeState();
+  WidgetTreeState createState() => WidgetTreeState();
 }
 
-class _WidgetTreeState extends State<WidgetTree> {
+class WidgetTreeState extends State<WidgetTree> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(

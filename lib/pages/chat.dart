@@ -1,4 +1,4 @@
- import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +7,8 @@ import 'api_key.dart';
 import 'chat_model.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key, required this.message, required this.imagePath}) : super(key: key);
+  const ChatScreen({Key? key, required this.message, required this.imagePath})
+      : super(key: key);
   final String message;
   final String imagePath;
 
@@ -75,7 +76,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     if (model.base64EncodedImage == null) {
       url =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GeminiApiKey.api_key}";
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GeminiApiKey.api_key}";
 
       body = {
         "contents": [
@@ -88,7 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
       };
     } else {
       url =
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${GeminiApiKey.api_key}";
+          "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key=${GeminiApiKey.api_key}";
 
       body = {
         "contents": [
@@ -121,7 +122,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final decodedJson = json.decode(result.body);
 
     String message =
-    decodedJson['candidates'][0]['content']['parts'][0]['text'];
+        decodedJson['candidates'][0]['content']['parts'][0]['text'];
 
     ChatModel geminiModel = ChatModel(isMe: false, message: message);
 
@@ -134,81 +135,87 @@ class _ChatScreenState extends State<ChatScreen> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
       home: Scaffold(
-      appBar: AppBar(
-        title: const Text("Image Chat"),
-        //backgroundColor: Colors.transparent,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 10,
-            child: ListView.builder(
-              reverse: true,
-              itemCount: chatList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(chatList[index].isMe ? "Me" : "Gemini"),
-                  subtitle: chatList[index].base64EncodedImage != null
-                      ? Column(
-                    children: [
-                      Image.memory(
-                        base64Decode(chatList[index].base64EncodedImage!),
-                        height: 300,
-                        width: double.infinity,
-                      ),
-                      Text(chatList[index].message),
-                    ],
-                  )
-                      : Text(chatList[index].message),
-                );
-              },
+        appBar: AppBar(
+          title: const Text("Image Chat"),
+          //backgroundColor: Colors.transparent,
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              flex: 10,
+              child: ListView.builder(
+                reverse: true,
+                itemCount: chatList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(chatList[index].isMe ? "Me" : "Gemini"),
+                    subtitle: chatList[index].base64EncodedImage != null
+                        ? Column(
+                            children: [
+                              Image.memory(
+                                base64Decode(
+                                    chatList[index].base64EncodedImage!),
+                                height: 300,
+                                width: double.infinity,
+                              ),
+                              Text(chatList[index].message),
+                            ],
+                          )
+                        : Text(chatList[index].message),
+                  );
+                },
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          SizedBox(
-            height: 60,
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    decoration: InputDecoration(
-                      prefixIcon: IconButton(
-                        onPressed: () {
-                          selectImage();
-                        },
-                        icon: const Icon(Icons.upload_file),
-                      ),
-                      hintText: "Message",
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(30),
+            const SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              height: 60,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                        prefixIcon: IconButton(
+                          onPressed: () {
+                            selectImage();
+                          },
+                          icon: const Icon(Icons.upload_file),
+                        ),
+                        hintText: "Message",
+                        border: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xff3a3a3a),
-                    borderRadius: BorderRadius.circular(10),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xff3a3a3a),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        onSendMessage();
+                      },
+                      child: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.send,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          )
-        ],
-      ),
+            const SizedBox(
+              height: 10,
+            )
+          ],
+        ),
       ),
     );
   }

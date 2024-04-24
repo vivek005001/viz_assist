@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'chat.dart';
+import 'package:dio/dio.dart';
+
 
 class DetailsPage extends StatefulWidget {
   // requires imagePath
@@ -67,7 +69,7 @@ class _DetailsPageState extends State<DetailsPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Bottle",
+                                  "Image",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 30,

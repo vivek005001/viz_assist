@@ -13,8 +13,66 @@ class DetailsPage extends StatefulWidget {
   State<DetailsPage> createState() => _DetailsPageState();
 }
 
+makeRequest() async {
+  // Define the API endpoint
+  String url = 'https://9f7e-34-91-194-123.ngrok-free.app/single_caption';
+
+  // Define the image URL
+  String imageUrl = 'https://tinyjpg.com/images/social/website.jpg';
+
+  // Define headers
+  Options options = Options(
+    headers: {
+      'accept': 'application/json',
+    },
+  );
+
+  // Create Dio instance
+  Dio dio = Dio();
+
+  try {
+    // Make the POST request
+    Response response = await dio.post(
+      url,
+      options: options,
+      queryParameters: {'image_path': imageUrl},
+    );
+
+    // Check if the request was successful (status code 200)
+    if (response.statusCode == 200) {
+      // Get the 'content' part from the response JSON
+      String content = response.data['content'].toString();
+      return content;
+    } else {
+      print('Error: ${response.statusCode}');
+      return null;
+    }
+  } catch (e) {
+    print('Error: $e');
+    return null;
+  }
+}
+
+
 class _DetailsPageState extends State<DetailsPage> {
   final FlutterTts flutterTts = FlutterTts();
+
+  String result = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // Call a separate function to handle the asynchronous operation
+    _initializeRequest();
+  }
+
+  Future<void> _initializeRequest() async {
+    // Call your async function here
+    String requestResult = await makeRequest();
+    setState(() {
+      result = requestResult;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,12 +202,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   width: 10,
                                 ),
                                 InkWell(
-                                  onTap: () async {
-                                    String? result = await makeRequest();
-                                    if (result != null) {
-                                      speak(result);
-                                    }
-                                  },
+                                  onTap: () => speak(result),
                                   child: const Icon(
                                     Icons.volume_up,
                                     color: Colors.white70,
@@ -163,12 +216,10 @@ class _DetailsPageState extends State<DetailsPage> {
                         const SizedBox(
                           height: 10,
                         ),
-                        const Padding(
+                        Padding(
                             padding: EdgeInsets.only(right: 20),
                             child: Text(
-                              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nunc. Nulla facilisi. Nullam ac nisi non nisl posuere blandit. Ut sit amet erat sit amet libero lacinia ultricies. Nulla facilisi. Nullam ac nisi non nisl posuere blandit. Ut sit amet erat sit amet libero lacinia ultricies."
-                              " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nunc. Nulla facilisi. Nullam ac nisi non nisl posuere blandit. Ut sit amet erat sit amet libero lacinia ultricies. Nulla facilisi. Nullam ac nisi non nisl posuere blandit. Ut sit amet erat sit amet libero lacinia ultricies."
-                              " Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, molestie ipsum et, consequat nunc. Nulla facilisi. Nullam ac nisi non nisl posuere blandit. Ut sit amet erat sit amet libero lacinia ultricies. Nulla facilisi. Nullam ac nisi non nisl posuere blandit. Ut sit amet erat sit amet libero lacinia ultricies.",
+                              result,
                               style: TextStyle(
                                 color: Colors.white38,
                                 fontSize: 15,

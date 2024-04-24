@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:media_scanner/media_scanner.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:image_speak/image_details.dart';
+import 'image_details.dart';
 
 class MainPage extends StatefulWidget {
   final List<CameraDescription> cameras;

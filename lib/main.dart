@@ -1,18 +1,29 @@
+import 'package:camera/camera.dart';
+import 'package:viz_assist/Pages/camera_page.dart';
 import 'package:flutter/material.dart';
-import 'package:viz_assist/Pages/Home.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final cameras = await availableCameras();
+  runApp(MainApp(cameras: cameras));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  final List<CameraDescription> cameras;
+  const MainApp({super.key, required this.cameras});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: MainPage(
+        cameras: cameras,
+      ),
+      // home: ChatScreen(),
     );
   }
 }
+
+
+

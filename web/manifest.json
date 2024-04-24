@@ -1,6 +1,6 @@
 {
-    "name": "viz_assist",
-    "short_name": "viz_assist",
+    "name": "image_speak",
+    "short_name": "image_speak",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -196,12 +196,16 @@ class _DetailsPageState extends State<DetailsPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 20),
-                              child: Text(
-                                result.text.substring(1),
-                                style: const TextStyle(
-                                  color: Colors.white38,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
+                              child: SingleChildScrollView(
+                                // Wrap in SingleChildScrollView
+                                scrollDirection: Axis.vertical,
+                                child: Text(
+                                  result.text.substring(1),
+                                  style: const TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),

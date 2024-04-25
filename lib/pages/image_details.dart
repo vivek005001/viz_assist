@@ -25,31 +25,40 @@ Future<String> encodeImage(String imagePath) async {
   return encodedString;
 }
 
-Future<String> makeRequest(path, File file) async {
-  var request = http.MultipartRequest('POST', Uri.parse('https://8078-34-90-92-13.ngrok-free.app/files'));
+class RequestResult {
+  final String text;
+  final String title;
+
+  RequestResult(this.text, this.title);
+}
+
+Future<RequestResult> makeRequest(path, File file) async {
+  var request = http.MultipartRequest('POST', Uri.parse('https://6cf7-34-125-44-133.ngrok-free.app/files'));
   request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync() as Uint8List, filename: file.path.split('/').last));
   var streamedResponse = await request.send();
   var res = await http.Response.fromStream(streamedResponse);
   var responseBody = json.decode(res.body);
   String text = responseBody['content'];
+  String title = responseBody['title'];
   if (res.statusCode == 200) {
     print("Uploaded!");
-    print("Server response: $text");
-    return text;
+    print("Description: $text");
+    print("Title: $title");
+    return RequestResult(text, title);
   }
   else {
     print("Failed to upload");
     // print error
     print("Server response: $res");
   }
-  return "Lorem Ipsum";
+  return RequestResult('text', 'title');
 }
 
 
 class _DetailsPageState extends State<DetailsPage> {
   final FlutterTts flutterTts = FlutterTts();
 
-  String result = "";
+  RequestResult result = RequestResult("Loading Description...", "Loading Title...");
 
   @override
   void initState() {
@@ -60,7 +69,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   Future<void> _initializeRequest() async {
     // Call your async function here
-    String requestResult = await makeRequest(widget.imagePath, widget.imageFile);
+    RequestResult requestResult = await makeRequest(widget.imagePath, widget.imageFile);
     setState(() {
       result = requestResult;
     });
@@ -114,21 +123,21 @@ class _DetailsPageState extends State<DetailsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Column(
+                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Image",
-                                  style: TextStyle(
+                                  result.title,
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 30,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
-                                Text(
+                                const Text(
                                   "Description",
                                   style: TextStyle(
                                     color: Colors.white38,
@@ -152,7 +161,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   width: 10,
                                 ),
                                 InkWell(
-                                  onTap: () => speak(result),
+                                  onTap: () => speak(result.text),
                                   child: const Icon(
                                     Icons.volume_up,
                                     color: Colors.white70,
@@ -169,7 +178,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: Text(
-                              result,
+                              result.text,
                               style: const TextStyle(
                                 color: Colors.white38,
                                 fontSize: 15,

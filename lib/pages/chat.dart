@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -29,37 +30,56 @@ class _ChatScreenState extends State<ChatScreen> {
       image = File(widget.imagePath);
       controller.text = widget.message;
     }
-    onSendMessage();
+    onSendMessage(image);
   }
 
-  void onSendMessage() async {
-    late ChatModel model;
+  void onSendMessage(File? file) async {
+    // late ChatModel model;
+    //
+    // if (image == null) {
+    //   model = ChatModel(isMe: true, message: controller.text);
+    // } else {
+    //   final imageBytes = await image!.readAsBytes();
+    //
+    //   String base64EncodedImage = base64Encode(imageBytes);
+    //
+    //   model = ChatModel(
+    //     isMe: true,
+    //     message: controller.text,
+    //     base64EncodedImage: base64EncodedImage,
+    //   );
+    // }
+    //
+    // chatList.insert(0, model);
+    //
+    // setState(() {});
+    //
+    // // Clear the text field after sending the message
+    // controller.clear();
+    //
+    // final geminiModel = await sendRequestToGemini(model);
+    //
+    // chatList.insert(0, geminiModel);
+    // setState(() {});
 
-    if (image == null) {
-      model = ChatModel(isMe: true, message: controller.text);
-    } else {
-      final imageBytes = await image!.readAsBytes();
+    var request = http.MultipartRequest('POST', Uri.parse('https://ca57-34-87-42-19.ngrok-free.app/chat'));
+    request.files.add(http.MultipartFile.fromBytes('file', file?.readAsBytesSync() as Uint8List, filename: file?.path.split('/').last));
+    request.fields['prompt'] = "What do you see in the image?";
+    var streamedResponse = await request.send();
+    var res = await http.Response.fromStream(streamedResponse);
+    var responseBody = json.decode(res.body);
+    String text = responseBody['content'];
 
-      String base64EncodedImage = base64Encode(imageBytes);
-
-      model = ChatModel(
-        isMe: true,
-        message: controller.text,
-        base64EncodedImage: base64EncodedImage,
-      );
-    }
-
+    ChatModel model = ChatModel(isMe: true, message: text);
     chatList.insert(0, model);
-
     setState(() {});
 
     // Clear the text field after sending the message
     controller.clear();
 
-    final geminiModel = await sendRequestToGemini(model);
-
-    chatList.insert(0, geminiModel);
+    chatList.insert(0, ChatModel(isMe: false, message: "I see a " + text));
     setState(() {});
+
   }
 
   void selectImage() async {
@@ -200,7 +220,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        onSendMessage();
+                        onSendMessage(image);
                       },
                       child: const Icon(
                         Icons.send,

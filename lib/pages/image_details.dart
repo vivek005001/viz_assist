@@ -10,7 +10,9 @@ import 'package:http/http.dart' as http;
 
 class DetailsPage extends StatefulWidget {
   // requires imagePath
-  const DetailsPage({Key? key, required this.imagePath, required this.imageFile}) : super(key: key);
+  const DetailsPage(
+      {Key? key, required this.imagePath, required this.imageFile})
+      : super(key: key);
   final String imagePath;
   final File imageFile;
 
@@ -33,8 +35,11 @@ class RequestResult {
 }
 
 Future<RequestResult> makeRequest(path, File file) async {
-  var request = http.MultipartRequest('POST', Uri.parse('https://ca57-34-87-42-19.ngrok-free.app/caption'));
-  request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync() as Uint8List, filename: file.path.split('/').last));
+  var request = http.MultipartRequest(
+      'POST', Uri.parse('https://ca57-34-87-42-19.ngrok-free.app/caption'));
+  request.files.add(http.MultipartFile.fromBytes(
+      'file', file.readAsBytesSync() as Uint8List,
+      filename: file.path.split('/').last));
   var streamedResponse = await request.send();
   var res = await http.Response.fromStream(streamedResponse);
   var responseBody = json.decode(res.body);
@@ -45,8 +50,7 @@ Future<RequestResult> makeRequest(path, File file) async {
     print("Description: $text");
     print("Title: $title");
     return RequestResult(text, title);
-  }
-  else {
+  } else {
     print("Failed to upload");
     // print error
     print("Server response: $res");
@@ -54,11 +58,11 @@ Future<RequestResult> makeRequest(path, File file) async {
   return RequestResult('text', 'title');
 }
 
-
 class _DetailsPageState extends State<DetailsPage> {
   final FlutterTts flutterTts = FlutterTts();
 
-  RequestResult result = RequestResult("Loading Description...", "Loading Title...");
+  RequestResult result =
+      RequestResult(" Loading Description...", " Loading Title...");
 
   @override
   void initState() {
@@ -69,7 +73,8 @@ class _DetailsPageState extends State<DetailsPage> {
 
   Future<void> _initializeRequest() async {
     // Call your async function here
-    RequestResult requestResult = await makeRequest(widget.imagePath, widget.imageFile);
+    RequestResult requestResult =
+        await makeRequest(widget.imagePath, widget.imageFile);
     setState(() {
       result = requestResult;
     });
@@ -135,10 +140,11 @@ class _DetailsPageState extends State<DetailsPage> {
                                   children: [
                                     SizedBox(
                                       width: 300,
-                                      height: 60, // Adjust this height according to your layout needs
+                                      height:
+                                          60, // Adjust this height according to your layout needs
                                       child: Flexible(
                                         child: Text(
-                                          result.title,
+                                          result.title.substring(1),
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 20,
@@ -163,7 +169,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                 Row(
                                   children: [
                                     const Text(
-                                      "",
+                                      "", // "Speech"
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 15,
@@ -191,7 +197,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             Padding(
                               padding: const EdgeInsets.only(right: 20),
                               child: Text(
-                                result.text,
+                                result.text.substring(1),
                                 style: const TextStyle(
                                   color: Colors.white38,
                                   fontSize: 15,
@@ -211,8 +217,8 @@ class _DetailsPageState extends State<DetailsPage> {
                   left: 0,
                   right: 0,
                   child: Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                     decoration: const BoxDecoration(
                       color: Color(0xff1a1a1a),
                       borderRadius: BorderRadius.only(
@@ -226,7 +232,8 @@ class _DetailsPageState extends State<DetailsPage> {
                           child: TextField(
                             controller: textController,
                             style: const TextStyle(
-                                color: Colors.white), // Ensure text color is visible
+                                color: Colors
+                                    .white), // Ensure text color is visible
                             decoration: const InputDecoration(
                               hintText: "Ask anything...",
                               hintStyle: TextStyle(
@@ -244,7 +251,8 @@ class _DetailsPageState extends State<DetailsPage> {
                         InkWell(
                           onTap: () {
                             String text = textController.text;
-                            print("Typed Text: $text"); // Check if text is captured
+                            print(
+                                "Typed Text: $text"); // Check if text is captured
                             textController.clear();
                             // Navigate to ChatScreen with the text and image path
                             Navigator.push(
@@ -279,6 +287,5 @@ class _DetailsPageState extends State<DetailsPage> {
         ],
       ),
     );
-
   }
 }

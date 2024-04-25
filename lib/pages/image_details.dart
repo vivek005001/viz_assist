@@ -36,9 +36,9 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://ca57-34-87-42-19.ngrok-free.app/caption'));
+      'POST', Uri.parse('https://8b3c-34-125-196-158.ngrok-free.app/caption'));
   request.files.add(http.MultipartFile.fromBytes(
-      'file', file.readAsBytesSync() as Uint8List,
+      'file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();
   var res = await http.Response.fromStream(streamedResponse);
@@ -157,7 +157,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                       height: 10,
                                     ),
                                     const Text(
-                                      "Description",
+                                      "Description:",
                                       style: TextStyle(
                                         color: Colors.white38,
                                         fontSize: 15,
@@ -196,19 +196,25 @@ class _DetailsPageState extends State<DetailsPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 20),
-                              child: SingleChildScrollView(
-                                // Wrap in SingleChildScrollView
-                                scrollDirection: Axis.vertical,
-                                child: Text(
-                                  result.text.substring(1),
-                                  style: const TextStyle(
-                                    color: Colors.white38,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              child: Container(
+                                height: 200, // Set a fixed height
+                                child: ListView(
+                                  scrollDirection: Axis.vertical,
+                                  children: [
+                                    Text(
+                                      result.text.substring(1),
+                                      style: const TextStyle(
+                                        color: Colors.white38,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
+                            )
+
+,
                           ],
                         ),
                       ),

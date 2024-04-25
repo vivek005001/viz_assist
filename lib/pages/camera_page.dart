@@ -67,6 +67,7 @@ class _CameraPageState extends State<CameraPage> {
       MaterialPageRoute(
         builder: (context) => DetailsPage(
           imagePath: file.path,
+          imageFile: file,
         ),
       ),
     );

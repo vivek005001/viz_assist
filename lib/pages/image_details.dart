@@ -1,14 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'chat.dart';
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:http/http.dart' as http;
 
 class DetailsPage extends StatefulWidget {
   // requires imagePath
-  const DetailsPage({Key? key, required this.imagePath}) : super(key: key);
+  const DetailsPage({Key? key, required this.imagePath, required this.imageFile}) : super(key: key);
   final String imagePath;
+  final File imageFile;
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
@@ -21,92 +25,24 @@ Future<String> encodeImage(String imagePath) async {
   return encodedString;
 }
 
-Future<String> uploadImage(String imagePath) async {
-  String url = "https://api.imgbb.com/1/upload";
-  String clientApiKey = "61aa016205031b92495bd11ff19b1d44"; // Replace this with your actual client API key
-
-  // Image data (base64 encoded string)
-  String imageData = await encodeImage(imagePath);
-
-  // Request parameters
-  Map<String, dynamic> params = {
-    "expiration": 600,
-    "key": clientApiKey,
-  };
-
-  // Form data
-  FormData formdata = FormData.fromMap({
-    "image": imageData,
-  });
-
-  // Creating Dio instance
-  Dio dio = Dio();
-
-  try {
-    // Making the POST request
-    Response response = await dio.post(
-      url,
-      queryParameters: params,
-      data: formdata,
-    );
-
-    // Printing the response
-    print(response.data);
-
-    Map<String, dynamic> responseData = response.data;
-
-    // Access the 'data' field
-    Map<String, dynamic> data = responseData['data'];
-
-    // Access the 'url' field within the 'data' field
-    String imageUrl = data['url'];
-    print("Image uploaded successfully! at $url");
-    return imageUrl;
-  } catch (e) {
-    print("Error uploading image: $e");
-    return "https://tinyjpg.com/images/social/website.jpg";
+Future<String> makeRequest(path, File file) async {
+  var request = http.MultipartRequest('POST', Uri.parse('https://8078-34-90-92-13.ngrok-free.app/files'));
+  request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync() as Uint8List, filename: file.path.split('/').last));
+  var streamedResponse = await request.send();
+  var res = await http.Response.fromStream(streamedResponse);
+  var responseBody = json.decode(res.body);
+  String text = responseBody['content'];
+  if (res.statusCode == 200) {
+    print("Uploaded!");
+    print("Server response: $text");
+    return text;
   }
-}
-
-makeRequest(path) async {
-  // Define the API endpoint
-  String url = 'https://9f7e-34-91-194-123.ngrok-free.app/single_caption';
-
-  // Define the image URL
-  String imageUrl = await uploadImage(path);
-  print("Fetching image from: $imageUrl");
-
-  // Define headers
-  Options options = Options(
-    headers: {
-      'accept': 'application/json',
-    },
-  );
-
-  // Create Dio instance
-  Dio dio = Dio();
-
-  try {
-    // Make the POST request
-    Response response = await dio.post(
-      url,
-      options: options,
-      queryParameters: {'image_path': imageUrl},
-    );
-
-    // Check if the request was successful (status code 200)
-    if (response.statusCode == 200) {
-      // Get the 'content' part from the response JSON
-      String content = response.data['content'].toString();
-      return content;
-    } else {
-      print('Error: ${response.statusCode}');
-      return null;
-    }
-  } catch (e) {
-    print('Error: $e');
-    return null;
+  else {
+    print("Failed to upload");
+    // print error
+    print("Server response: $res");
   }
+  return "Lorem Ipsum";
 }
 
 
@@ -124,7 +60,7 @@ class _DetailsPageState extends State<DetailsPage> {
 
   Future<void> _initializeRequest() async {
     // Call your async function here
-    String requestResult = await makeRequest(widget.imagePath);
+    String requestResult = await makeRequest(widget.imagePath, widget.imageFile);
     setState(() {
       result = requestResult;
     });

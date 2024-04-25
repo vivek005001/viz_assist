@@ -134,15 +134,17 @@ class _DetailsPageState extends State<DetailsPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      width: 200,
-                                      child: Text(
-                                        result.title,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w600,
+                                      width: 300,
+                                      height: 60, // Adjust this height according to your layout needs
+                                      child: Flexible(
+                                        child: Text(
+                                          result.title,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     const SizedBox(

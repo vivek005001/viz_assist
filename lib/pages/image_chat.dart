@@ -5,6 +5,7 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http_parser/http_parser.dart' as http_parser;
 
 class ChatPage extends StatefulWidget {
@@ -27,18 +28,23 @@ class _ChatPageState extends State<ChatPage> {
   );
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Image Chat'),
+    return MaterialApp(
+      title: 'VizAssist',
+      theme: ThemeData.light(), // Apply the dark theme
+      home: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('VizAssist: Chat'),
+        ),
+        body: _buildUI(),
       ),
-      body:
-      _buildUI(),
     );
   }
   Widget _buildUI() {
     return DashChat(
-        inputOptions: InputOptions(trailing: [IconButton(onPressed: _sendMediaMessage, icon: const Icon(Icons.image),)]),
+        inputOptions: InputOptions(trailing: [IconButton(
+          icon: const Icon(Icons.mic), onPressed: _listen,
+        ),]),
         currentUser: currentUser,
         onSend: _sendMessage,
         messages: messages);
@@ -103,14 +109,25 @@ class _ChatPageState extends State<ChatPage> {
     return 'text';
   }
 
-  void _sendMediaMessage() async {
-    ImagePicker picker = ImagePicker();
-    XFile? file = await picker.pickImage(source: ImageSource.gallery);
-    if(file != null) {
-      ChatMessage chatMessage = ChatMessage(user: currentUser, createdAt: DateTime.now(), text: "Describe this image", medias: [
-        ChatMedia(url: file.path, fileName: "", type: MediaType.image)
-      ]);
-      _sendMessage(chatMessage);
+  // function for speech to text
+  void _listen() async {
+    final stt.SpeechToText speech = stt.SpeechToText();
+    bool available = await speech.initialize(
+      onStatus: (val) => print('onStatus: $val'),
+      onError: (val) => print('onError: $val'),
+    );
+    if (available) {
+      speech.listen(
+        onResult: (val) => setState(() {
+          messages.insert(0, ChatMessage(
+            text: val.recognizedWords,
+            user: currentUser,
+            createdAt: DateTime.now(),
+          ));
+        }),
+      );
+    } else {
+      print("The user has denied the use of speech recognition.");
     }
   }
 

@@ -1,4 +1,6 @@
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:camera/camera.dart';
+import 'package:image_speak/utils/splash.dart';
 import 'pages/camera_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/home.dart';
@@ -7,6 +9,7 @@ import 'pages/home_page.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'pages/consts.dart';
 import 'pages/image_chat.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +26,18 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CameraPage(
-        cameras: cameras,
-      ),
+      home: AnimatedSplashScreen(splash: Center(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.asset(
+            'lib/icons/icon.png',
+            width: 80,
+            height: 80,
+          ),
+        ),
+
+      ),nextScreen: HomePage(),),
+
       // home: ChatPage(),
     );
   }

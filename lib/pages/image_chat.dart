@@ -68,7 +68,7 @@ class _ChatPageState extends State<ChatPage> {
     // Create a response message and add it to the list
     ChatMessage responseMessage = ChatMessage(
       text: responseText,
-      user: currentUser, // Assuming the API response is from a bot user with id 0
+      user: queryBot, // Assuming the API response is from a bot user with id 0
       createdAt: DateTime.now(),
     );
 

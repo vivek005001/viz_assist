@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'chat.dart';
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
 
 class DetailsPage extends StatefulWidget {
@@ -177,7 +174,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                       ),
                                     ),
                                     const SizedBox(
-                                      width: 10,
+                                      width: 0,
                                     ),
                                     InkWell(
                                       onTap: () => speak(result.text),
@@ -192,11 +189,11 @@ class _DetailsPageState extends State<DetailsPage> {
                               ],
                             ),
                             const SizedBox(
-                              height: 10,
+                              height: 5,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 20),
-                              child: Container(
+                              child: SizedBox(
                                 height: 200, // Set a fixed height
                                 child: ListView(
                                   scrollDirection: Axis.vertical,

@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'pages/home.dart';
 import 'pages/login_register_page.dart';
 import 'pages/home_page.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
+import 'pages/consts.dart';
+import 'pages/image_chat.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  Gemini.init(apiKey: GEMINI_API_KEY);
   final cameras = await availableCameras();
   runApp(MainApp(cameras: cameras));
 }
@@ -20,9 +23,10 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CameraPage(
-        cameras: cameras,
-      ),
+      // home: CameraPage(
+      //   cameras: cameras,
+      // ),
+      home: ChatPage(),
     );
   }
 }

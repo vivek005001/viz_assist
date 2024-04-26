@@ -8,15 +8,15 @@ import 'package:media_scanner/media_scanner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'image_details.dart';
 
-class MainPage extends StatefulWidget {
+class CameraPage extends StatefulWidget {
   final List<CameraDescription> cameras;
-  const MainPage({super.key, required this.cameras});
+  const CameraPage({super.key, required this.cameras});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<CameraPage> createState() => _CameraPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _CameraPageState extends State<CameraPage> {
   late CameraController cameraController;
   late Future<void> cameraValue;
   List<File> imagesList = [];
@@ -67,6 +67,7 @@ class _MainPageState extends State<MainPage> {
       MaterialPageRoute(
         builder: (context) => DetailsPage(
           imagePath: file.path,
+          imageFile: file,
         ),
       ),
     );
@@ -199,51 +200,6 @@ class _MainPageState extends State<MainPage> {
                   ],
                 ),
               ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 7, bottom: 75),
-                    child: Container(
-                      height: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: 1,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (BuildContext context, int index) {
-                          if(imagesList.isEmpty) {
-                            return const SizedBox();
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image(
-                                height: 100,
-                                width: 100,
-                                opacity: const AlwaysStoppedAnimation(07),
-                                image: FileImage(
-                                  File(imagesList[imagesList.length-1].path),
-                                ),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                )
-              ],
             ),
           ),
         ],

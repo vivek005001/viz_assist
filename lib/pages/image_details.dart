@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:image_speak/pages/image_chat.dart';
 import 'chat.dart';
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class DetailsPage extends StatefulWidget {
   // requires imagePath
@@ -36,9 +35,8 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://8b3c-34-125-196-158.ngrok-free.app/caption'));
-  request.files.add(http.MultipartFile.fromBytes(
-      'file', file.readAsBytesSync(),
+      'POST', Uri.parse('https://dfa9-34-139-66-56.ngrok-free.app/caption'));
+  request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();
   var res = await http.Response.fromStream(streamedResponse);
@@ -123,6 +121,16 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),
                         ),
                       ),
+                      if (result.text == " Loading Description...")
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.50,
+                          alignment: Alignment.center,
+                          child: LoadingAnimationWidget.staggeredDotsWave(
+                            color: Colors.white,
+                            size: 100,
+                          ),
+                        )
+                      else
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
@@ -177,7 +185,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                       ),
                                     ),
                                     const SizedBox(
-                                      width: 10,
+                                      width: 0,
                                     ),
                                     InkWell(
                                       onTap: () => speak(result.text),
@@ -192,11 +200,11 @@ class _DetailsPageState extends State<DetailsPage> {
                               ],
                             ),
                             const SizedBox(
-                              height: 10,
+                              height: 5,
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 20),
-                              child: Container(
+                              child: SizedBox(
                                 height: 200, // Set a fixed height
                                 child: ListView(
                                   scrollDirection: Axis.vertical,
@@ -212,9 +220,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   ],
                                 ),
                               ),
-                            )
-
-,
+                            ),
                           ],
                         ),
                       ),
@@ -268,9 +274,9 @@ class _DetailsPageState extends State<DetailsPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChatScreen(
-                                  message: text,
-                                  imagePath: imagePath,
+                                builder: (context) => ChatPage(
+                                  initialMessage: text,
+                                  imageFile: widget.imageFile,
                                 ),
                               ),
                             );

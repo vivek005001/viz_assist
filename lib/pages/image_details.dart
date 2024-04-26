@@ -35,7 +35,7 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://dfa9-34-139-66-56.ngrok-free.app/caption'));
+      'POST', Uri.parse('https://11a3-34-136-92-15.ngrok-free.app/caption'));
   request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();
@@ -167,7 +167,16 @@ class _DetailsPageState extends State<DetailsPage> {
                                     const Text(
                                       "Description:",
                                       style: TextStyle(
-                                        color: Colors.white38,
+                                        // color: Colors.white38,
+                                        shadows: [
+                                          Shadow(
+                                              color: Colors.white38,
+                                              offset: Offset(0, -5))
+                                        ],
+                                        color: Colors.transparent,
+                                        decoration:
+                                        TextDecoration.underline,
+                                        decorationColor: Color(0xFF4D96AF),
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
                                       ),

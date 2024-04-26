@@ -5,6 +5,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_speak/pages/image_chat.dart';
 import 'chat.dart';
 import 'package:http/http.dart' as http;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class DetailsPage extends StatefulWidget {
   // requires imagePath
@@ -35,8 +36,7 @@ class RequestResult {
 Future<RequestResult> makeRequest(path, File file) async {
   var request = http.MultipartRequest(
       'POST', Uri.parse('https://dfa9-34-139-66-56.ngrok-free.app/caption'));
-  request.files.add(http.MultipartFile.fromBytes(
-      'file', file.readAsBytesSync(),
+  request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();
   var res = await http.Response.fromStream(streamedResponse);
@@ -121,6 +121,16 @@ class _DetailsPageState extends State<DetailsPage> {
                           ),
                         ),
                       ),
+                      if (result.text == " Loading Description...")
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.50,
+                          alignment: Alignment.center,
+                          child: LoadingAnimationWidget.staggeredDotsWave(
+                            color: Colors.white,
+                            size: 100,
+                          ),
+                        )
+                      else
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
@@ -210,9 +220,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                   ],
                                 ),
                               ),
-                            )
-
-,
+                            ),
                           ],
                         ),
                       ),

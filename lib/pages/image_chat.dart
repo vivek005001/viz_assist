@@ -9,7 +9,9 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http_parser/http_parser.dart' as http_parser;
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.imageFile, required this.initialMessage}) : super(key: key);
+  const ChatPage(
+      {Key? key, required this.imageFile, required this.initialMessage})
+      : super(key: key);
   final File imageFile;
   final String initialMessage;
 
@@ -21,7 +23,11 @@ class _ChatPageState extends State<ChatPage> {
   List<ChatMessage> messages = [];
 
   ChatUser currentUser = ChatUser(id: '0', firstName: 'Me');
-  ChatUser queryBot = ChatUser(id: '1', firstName: 'VizAssist', profileImage: 'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png');
+  ChatUser queryBot = ChatUser(
+      id: '1',
+      firstName: 'VizAssist',
+      profileImage:
+          'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png');
   ChatMessage initialChatMessage = ChatMessage(
     text: 'Hello! How can I help you today?',
     user: ChatUser(id: '1', firstName: 'VizAssist'),
@@ -70,9 +76,6 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -87,11 +90,15 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+
   Widget _buildUI() {
     return DashChat(
-        inputOptions: InputOptions(trailing: [IconButton(
-          icon: const Icon(Icons.mic), onPressed: _listen,
-        ),]),
+        inputOptions: InputOptions(trailing: [
+          IconButton(
+            icon: const Icon(Icons.mic),
+            onPressed: _listen,
+          ),
+        ]),
         currentUser: currentUser,
         onSend: _sendMessage,
         messages: messages);
@@ -147,8 +154,7 @@ class _ChatPageState extends State<ChatPage> {
       print("Uploaded!");
       print("Response: $text");
       return text;
-    }
-    else {
+    } else {
       print("Failed to upload");
       // print error
       print("Server response: $res");
@@ -166,17 +172,17 @@ class _ChatPageState extends State<ChatPage> {
     if (available) {
       speech.listen(
         onResult: (val) => setState(() {
-          messages.insert(0, ChatMessage(
-            text: val.recognizedWords,
-            user: currentUser,
-            createdAt: DateTime.now(),
-          ));
+          messages.insert(
+              0,
+              ChatMessage(
+                text: val.recognizedWords,
+                user: currentUser,
+                createdAt: DateTime.now(),
+              ));
         }),
       );
     } else {
       print("The user has denied the use of speech recognition.");
     }
   }
-
 }
-

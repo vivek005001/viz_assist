@@ -9,8 +9,9 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http_parser/http_parser.dart' as http_parser;
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.imageFile, required String message}) : super(key: key);
+  const ChatPage({Key? key, required this.imageFile, required this.initialMessage}) : super(key: key);
   final File imageFile;
+  final String initialMessage;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -21,11 +22,57 @@ class _ChatPageState extends State<ChatPage> {
 
   ChatUser currentUser = ChatUser(id: '0', firstName: 'Me');
   ChatUser queryBot = ChatUser(id: '1', firstName: 'VizAssist', profileImage: 'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png');
-  ChatMessage testMessage = ChatMessage(
-    text: "message.text",
-    user: ChatUser(id: '2', firstName: 'Test'),
+  ChatMessage initialChatMessage = ChatMessage(
+    text: 'Hello! How can I help you today?',
+    user: ChatUser(id: '1', firstName: 'VizAssist'),
     createdAt: DateTime.now(),
   );
+
+  void initState() {
+    super.initState();
+    _initializeChat();
+  }
+
+  Future<void> _initializeChat() async {
+    // Create the initial message
+    ChatMessage initialMessage = ChatMessage(
+      text: widget.initialMessage,
+      user: currentUser,
+      createdAt: DateTime.now(),
+    );
+
+    // Add the initial message to the list
+    setState(() {
+      messages.insert(0, initialMessage);
+    });
+
+    // Check if the message contains a file
+    File? file = widget.imageFile;
+
+    try {
+      // Send the API request with the initial message and file (if any)
+      String? responseText = await _sendApiRequest(initialMessage, file);
+      print("responseText: $responseText");
+
+      // Create a response message based on the API response
+      ChatMessage responseMessage = ChatMessage(
+        text: responseText ?? "No response from API",
+        user: queryBot,
+        createdAt: DateTime.now(),
+      );
+
+      // Add the response message to the list
+      setState(() {
+        messages.insert(0, responseMessage);
+      });
+    } catch (error) {
+      print("Error sending initial message: $error");
+    }
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

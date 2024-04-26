@@ -267,7 +267,7 @@ class _DetailsPageState extends State<DetailsPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ChatPage(
-                                  message: text,
+                                  initialMessage: text,
                                   imageFile: widget.imageFile,
                                 ),
                               ),

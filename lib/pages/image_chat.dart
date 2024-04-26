@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:http_parser/http_parser.dart' as http_parser;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({Key? key, required this.imageFile, required this.initialMessage}) : super(key: key);
+  const ChatPage(
+      {Key? key, required this.imageFile, required this.initialMessage})
+      : super(key: key);
   final File imageFile;
   final String initialMessage;
 
@@ -21,19 +21,29 @@ class _ChatPageState extends State<ChatPage> {
   List<ChatMessage> messages = [];
 
   ChatUser currentUser = ChatUser(id: '0', firstName: 'Me');
-  ChatUser queryBot = ChatUser(id: '1', firstName: 'VizAssist', profileImage: 'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png');
+  ChatUser queryBot = ChatUser(
+      id: '1',
+      firstName: 'VizAssist',
+      profileImage:
+          'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png'); // Add a profile image
   ChatMessage initialChatMessage = ChatMessage(
     text: 'Hello! How can I help you today?',
     user: ChatUser(id: '1', firstName: 'VizAssist'),
     createdAt: DateTime.now(),
   );
 
+  bool isLoading = false;
+
+  @override
   void initState() {
     super.initState();
     _initializeChat();
   }
 
   Future<void> _initializeChat() async {
+    setState(() {
+      isLoading = true; // Set loading state to true before sending API request
+    });
     // Create the initial message
     ChatMessage initialMessage = ChatMessage(
       text: widget.initialMessage,
@@ -67,17 +77,29 @@ class _ChatPageState extends State<ChatPage> {
       });
     } catch (error) {
       print("Error sending initial message: $error");
+    } finally {
+      setState(() {
+        isLoading = false; // Set loading state to false after API request is completed
+      });
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
+    ThemeData darkTheme = ThemeData(
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.grey[900],
+        foregroundColor: Colors.white,
+      ),
+      colorScheme: ColorScheme.fromSwatch(
+              primarySwatch: getMaterialColor(const Color(0xFF4D96AF)))
+          .copyWith(background: Colors.grey[900]),
+    );
+
     return MaterialApp(
       title: 'VizAssist',
-      theme: ThemeData.light(), // Apply the dark theme
+      debugShowCheckedModeBanner: false,
+      theme: darkTheme, // Apply the dark theme
       home: Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -87,14 +109,27 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+
   Widget _buildUI() {
+    if (isLoading) {
+      return Center(
+        child: LoadingAnimationWidget.beat(
+          color: Colors.white,
+          size: 100,
+        ),
+      );
+    }
     return DashChat(
-        inputOptions: InputOptions(trailing: [IconButton(
-          icon: const Icon(Icons.mic), onPressed: _listen,
-        ),]),
+        inputOptions: InputOptions(trailing: [
+          IconButton(
+            icon: const Icon(Icons.mic, color: Colors.white),
+            onPressed: _listen,
+          ),
+        ]),
         currentUser: currentUser,
         onSend: _sendMessage,
-        messages: messages);
+        messages: messages
+    );
   }
 
   void _sendMessage(ChatMessage message) async {
@@ -107,6 +142,7 @@ class _ChatPageState extends State<ChatPage> {
 
     // Add the user's message to the list
     setState(() {
+      isLoading = true; // Set loading state to true before sending API request
       messages.insert(0, userMessage);
     });
 
@@ -126,12 +162,13 @@ class _ChatPageState extends State<ChatPage> {
     );
 
     setState(() {
+      isLoading = false; // Set loading state to false after API request is completed
       messages.insert(0, responseMessage);
     });
   }
 
   Future<String> _sendApiRequest(ChatMessage chatMessage, File file) async {
-    var uri = Uri.parse('https://dfa9-34-139-66-56.ngrok-free.app/chat');
+    var uri = Uri.parse('https://11a3-34-136-92-15.ngrok-free.app/chat');
     uri = uri.replace(queryParameters: {
       'prompt': chatMessage.text,
     });
@@ -147,8 +184,7 @@ class _ChatPageState extends State<ChatPage> {
       print("Uploaded!");
       print("Response: $text");
       return text;
-    }
-    else {
+    } else {
       print("Failed to upload");
       // print error
       print("Server response: $res");
@@ -166,17 +202,39 @@ class _ChatPageState extends State<ChatPage> {
     if (available) {
       speech.listen(
         onResult: (val) => setState(() {
-          messages.insert(0, ChatMessage(
-            text: val.recognizedWords,
-            user: currentUser,
-            createdAt: DateTime.now(),
-          ));
+          messages.insert(
+              0,
+              ChatMessage(
+                text: val.recognizedWords,
+                user: currentUser,
+                createdAt: DateTime.now(),
+              ));
         }),
       );
     } else {
       print("The user has denied the use of speech recognition.");
     }
   }
-
 }
 
+MaterialColor getMaterialColor(Color color) {
+  final int red = color.red;
+  final int green = color.green;
+  final int blue = color.blue;
+  final int alpha = color.alpha;
+
+  final Map<int, Color> shades = {
+    50: Color.fromARGB(alpha, red, green, blue),
+    100: Color.fromARGB(alpha, red, green, blue),
+    200: Color.fromARGB(alpha, red, green, blue),
+    300: Color.fromARGB(alpha, red, green, blue),
+    400: Color.fromARGB(alpha, red, green, blue),
+    500: Color.fromARGB(alpha, red, green, blue),
+    600: Color.fromARGB(alpha, red, green, blue),
+    700: Color.fromARGB(alpha, red, green, blue),
+    800: Color.fromARGB(alpha, red, green, blue),
+    900: Color.fromARGB(alpha, red, green, blue),
+  };
+
+  return MaterialColor(color.value, shades);
+}

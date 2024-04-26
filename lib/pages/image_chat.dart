@@ -4,6 +4,7 @@ import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage(
@@ -31,6 +32,8 @@ class _ChatPageState extends State<ChatPage> {
     createdAt: DateTime.now(),
   );
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +41,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> _initializeChat() async {
+    setState(() {
+      isLoading = true; // Set loading state to true before sending API request
+    });
     // Create the initial message
     ChatMessage initialMessage = ChatMessage(
       text: widget.initialMessage,
@@ -71,6 +77,10 @@ class _ChatPageState extends State<ChatPage> {
       });
     } catch (error) {
       print("Error sending initial message: $error");
+    } finally {
+      setState(() {
+        isLoading = false; // Set loading state to false after API request is completed
+      });
     }
   }
 
@@ -101,6 +111,14 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildUI() {
+    if (isLoading) {
+      return Center(
+        child: LoadingAnimationWidget.beat(
+          color: Colors.white,
+          size: 100,
+        ),
+      );
+    }
     return DashChat(
         inputOptions: InputOptions(trailing: [
           IconButton(
@@ -110,7 +128,8 @@ class _ChatPageState extends State<ChatPage> {
         ]),
         currentUser: currentUser,
         onSend: _sendMessage,
-        messages: messages);
+        messages: messages
+    );
   }
 
   void _sendMessage(ChatMessage message) async {
@@ -123,6 +142,7 @@ class _ChatPageState extends State<ChatPage> {
 
     // Add the user's message to the list
     setState(() {
+      isLoading = true; // Set loading state to true before sending API request
       messages.insert(0, userMessage);
     });
 
@@ -142,6 +162,7 @@ class _ChatPageState extends State<ChatPage> {
     );
 
     setState(() {
+      isLoading = false; // Set loading state to false after API request is completed
       messages.insert(0, responseMessage);
     });
   }

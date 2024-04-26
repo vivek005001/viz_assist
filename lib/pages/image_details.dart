@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:image_speak/pages/image_chat.dart';
 import 'chat.dart';
 import 'package:http/http.dart' as http;
 
@@ -33,7 +34,7 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://8b3c-34-125-196-158.ngrok-free.app/caption'));
+      'POST', Uri.parse('https://dfa9-34-139-66-56.ngrok-free.app/caption'));
   request.files.add(http.MultipartFile.fromBytes(
       'file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
@@ -265,9 +266,9 @@ class _DetailsPageState extends State<DetailsPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChatScreen(
+                                builder: (context) => ChatPage(
                                   message: text,
-                                  imagePath: imagePath,
+                                  imageFile: widget.imageFile,
                                 ),
                               ),
                             );

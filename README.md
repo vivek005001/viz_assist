@@ -1,7 +1,8 @@
 # viz_assist
 
-A new Flutter project.
-
+Yamaha AI innovation 3.0 Submission .
+Image captioning app that uses A Ensemble of Vit+GPT2(Trained on Data Provided) and LLaVa.
+Our Tech Stack includes FastAPI,Flutter,Pytorch.
 ## Getting Started
 
 This project is a starting point for a Flutter application.

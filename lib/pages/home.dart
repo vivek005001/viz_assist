@@ -4,6 +4,14 @@ import 'package:image_speak/utils/translation_page.dart';
 import 'package:lottie/lottie.dart';
 import '/utils/smart_device_box.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:translator/translator.dart';
+
+
+
+
+
+
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,6 +24,36 @@ class _HomePageState extends State<HomePage> {
   // padding constants
   final double horizontalPadding = 40;
   final double verticalPadding = 25;
+  String output = "";
+
+  @override
+  void initState() {
+    super.initState();
+    performTranslation();
+  }
+
+  Future<void>  translate(String src, String dest, String input) async {
+    GoogleTranslator translator = GoogleTranslator();
+    var translation = await translator.translate(input, from: src, to: dest);
+    setState(() {
+      output = translation.text.toString();
+      print("object");
+    });
+    if (src == '--' || dest == '--') {
+      setState(() {
+        output = 'Fail to translate';
+      });
+    }
+  }
+
+  void performTranslation() async {
+    void translatedText = await translate('en', 'ja', 'Hello, world!');
+  }
+
+
+  // void temp = translate("en","ja","Hello");
+  // translate("en","ja","Hello");
+
 
   // // list of smart devices
   // List mySmartDevices = [
@@ -34,8 +72,10 @@ class _HomePageState extends State<HomePage> {
   // }
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: const Color(0xFF0D0D0D),
       body: SafeArea(
         child: Column(
@@ -84,9 +124,11 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
+
                   Text(
-                    "Welcome",
+
+                    'Hello',
                     style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
                   ),
                   Container(

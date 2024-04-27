@@ -109,7 +109,19 @@ class _ChatPageState extends State<ChatPage> {
           .copyWith(background: Colors.grey[900]),
     );
 
-    return MaterialApp(
+    return GestureDetector(
+      onPanUpdate: (details) {
+        // Swiping in right direction.
+        if (details.delta.dx > 0) {
+          Navigator.pop(context);
+        }
+
+        // Swiping in left direction.
+        if (details.delta.dx < 0) {
+          _listen();
+        }
+      },
+      child: MaterialApp(
       title: 'VizAssist',
       debugShowCheckedModeBanner: false,
       theme: darkTheme, // Apply the dark theme
@@ -128,6 +140,7 @@ class _ChatPageState extends State<ChatPage> {
               )
             : _buildUI(),
       ),
+    ),
     );
   }
 

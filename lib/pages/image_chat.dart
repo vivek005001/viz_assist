@@ -54,7 +54,6 @@ class _ChatPageState extends State<ChatPage> {
                   user: currentUser,
                   createdAt: DateTime.now(),
                 );
-                messages.insert(0, newMessage);
                 _sendMessage(newMessage);
                 recognizedText = ''; // Reset the recognized text
                 if (val.hasConfidenceRating && val.confidence > 0) {

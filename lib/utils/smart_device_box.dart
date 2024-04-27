@@ -2,6 +2,8 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import '../pages/image_details.dart';
 import '/pages/camera_page.dart';
 
 class SmartDeviceBox extends StatelessWidget {
@@ -72,19 +74,56 @@ class SmartDeviceBox extends StatelessWidget {
               ),
             );
           }
+
+          if (index == 3) {
+            Future<XFile?> getImage() async {
+              final ImagePicker picker = ImagePicker();
+              final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+              WidgetsFlutterBinding.ensureInitialized();
+              return image;
+            }
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FutureBuilder<XFile?>(
+                  future: getImage(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return DetailsPage(
+
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    // Display a loading indicator while waiting
+                    return const CircularProgressIndicator();
+                  },
+                ),
+              ),
+            );
+          }
+
         },
+
+
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: customColor == null // Checking if customColor is provided
                 ? LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                powerOn ? const Color(0xFF4D90A6) : const Color(0xFF539FB8),
-                powerOn ? const Color(0xFF01516C) : const Color(0xFF006789),
-              ],
-            )
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      powerOn
+                          ? const Color(0xFF4D90A6)
+                          : const Color(0xFF539FB8),
+                      powerOn
+                          ? const Color(0xFF01516C)
+                          : const Color(0xFF006789),
+                    ],
+                  )
                 : null, // Setting gradient to null if customColor is provided
             color: customColor, // Using customColor if provided
           ),
@@ -125,6 +164,4 @@ class SmartDeviceBox extends StatelessWidget {
       ),
     );
   }
-  }
-
-
+}

@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                     style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
                   ),
                   Text(
-                    'Mitch Koko',
+                    'Luv Sharma',
                     style: TextStyle(
                       fontFamily: GoogleFonts.bebasNeue().fontFamily,
                       fontSize: 72,
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Text(
-                "Smart Devices",
+                "UTILITY FEATURES",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 24,

@@ -6,6 +6,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:translator/translator.dart';
+
 
 speak(String text) async {
   final FlutterTts flutterTts = FlutterTts();
@@ -27,6 +29,35 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   List<ChatMessage> messages = [];
+
+  // String output = "";
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   performTranslation();
+  // }
+
+  Future<String>  translate(String src, String dest, String input) async {
+    GoogleTranslator translator = GoogleTranslator();
+    String output = "";
+    var translation = await translator.translate(input, from: src, to: dest);
+    setState(() {
+      output = translation.text.toString();
+      print("object");
+    });
+    if (src == '--' || dest == '--') {
+      setState(() {
+        output = 'Fail to translate';
+      });
+    }
+
+    return output;
+  }
+
+  Future<String> performTranslation(String dest,String inp) async {
+    return await translate('en', dest, inp);
+  }
 
   final stt.SpeechToText _speech = stt.SpeechToText();
   bool isListening = false;
@@ -76,12 +107,12 @@ class _ChatPageState extends State<ChatPage> {
   );
   ChatUser queryBot = ChatUser(
       id: '1',
-      firstName: 'VizAssist',
+      firstName: 'Image Speak',
       profileImage:
           'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png'); // Add a profile image
   ChatMessage initialChatMessage = ChatMessage(
     text: 'Hello! How can I help you today?',
-    user: ChatUser(id: '1', firstName: 'VizAssist'),
+    user: ChatUser(id: '1', firstName: 'Image Speak'),
     createdAt: DateTime.now(),
   );
 
@@ -208,7 +239,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<String> _sendApiRequest(ChatMessage chatMessage, File file) async {
-    var uri = Uri.parse('https://27d1-34-141-232-103.ngrok-free.app/chat');
+    var uri = Uri.parse('https://9ad7-34-87-61-161.ngrok-free.app/chat');
     uri = uri.replace(queryParameters: {
       'prompt': chatMessage.text,
     });
@@ -220,6 +251,8 @@ class _ChatPageState extends State<ChatPage> {
     var res = await http.Response.fromStream(streamedResponse);
     var responseBody = json.decode(res.body);
     String text = responseBody['content'];
+    String dest = 'hi';
+    text = await performTranslation(dest,text);
     if (res.statusCode == 200) {
       print("Uploaded!");
       print("Response: $text");

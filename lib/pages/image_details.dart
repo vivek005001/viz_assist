@@ -44,7 +44,7 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://27d1-34-141-232-103.ngrok-free.app/caption'));
+      'POST', Uri.parse('https://9ad7-34-87-61-161.ngrok-free.app/caption'));
   request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();

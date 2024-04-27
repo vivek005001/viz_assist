@@ -96,24 +96,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     startCamera(0);
-    speak("Shake your phone or Double tap on the screen to take a picture");
-    ShakeDetector detector = ShakeDetector.autoStart(
-      onPhoneShake: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Shake!'),
-          ),
-        );
-        takePicture();
-        // Do stuff on phone shake
-      },
-      minimumShakeCount: 1,
-      shakeSlopTimeMS: 500,
-      shakeCountResetTime: 3000,
-      shakeThresholdGravity: 2.7,
-    );
-
-    detector.startListening();
+    speak("Welcome to ImageSpeak. Double tap on the screen or press the Camera button to take a picture");
     super.initState();
   }
 

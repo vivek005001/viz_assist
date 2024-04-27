@@ -1,5 +1,6 @@
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:camera/camera.dart';
+import 'package:image_speak/pages/voice_chat.dart';
 import 'package:image_speak/utils/splash.dart';
 import 'pages/camera_page.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +26,10 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Splash(
-        // cameras: cameras,
+      home: CameraPage(
+        cameras: cameras,
       ),
+      // home: SpeechScreen(),
     );
   }
 }

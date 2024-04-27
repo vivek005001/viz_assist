@@ -2,9 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+speak(String text) async {
+  final FlutterTts flutterTts = FlutterTts();
+  await flutterTts.setLanguage("en-US");
+  await flutterTts.setPitch(1.25);
+  await flutterTts.speak(text);
+}
+
 
 class ChatPage extends StatefulWidget {
   const ChatPage(
@@ -19,6 +28,48 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   List<ChatMessage> messages = [];
+
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool isListening = false;
+  String _text = 'Press the button and start speaking';
+  double _confidence = 1.0;
+
+  void _listen() async {
+    if (!isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus: $val'),
+        onError: (val) => print('onError: $val'),
+      );
+      if (available) {
+        setState(() => isListening = true);
+        String recognizedText = '';
+        _speech.listen(
+          onResult: (val) {
+            setState(() {
+              recognizedText = val.recognizedWords;
+              print("RECOGNIZED: $recognizedText");
+              if (val.finalResult) {
+                ChatMessage newMessage = ChatMessage(
+                  text: recognizedText,
+                  user: currentUser,
+                  createdAt: DateTime.now(),
+                );
+                messages.insert(0, newMessage);
+                _sendMessage(newMessage);
+                recognizedText = ''; // Reset the recognized text
+                if (val.hasConfidenceRating && val.confidence > 0) {
+                  _confidence = val.confidence;
+                }
+              }
+            });
+          },
+        );
+      }
+    } else {
+      setState(() => isListening = false);
+      _speech.stop();
+    }
+  }
 
   ChatUser currentUser = ChatUser(id: '0', firstName: 'Me');
   ChatUser queryBot = ChatUser(
@@ -37,51 +88,11 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _initializeChat();
-  }
-
-  Future<void> _initializeChat() async {
-    setState(() {
-      isLoading = true; // Set loading state to true before sending API request
-    });
-    // Create the initial message
-    ChatMessage initialMessage = ChatMessage(
-      text: widget.initialMessage,
-      user: currentUser,
-      createdAt: DateTime.now(),
+    _speech.initialize(
+      onStatus: (val) => print('onStatus: $val'),
+      onError: (val) => print('onError: $val'),
     );
-
-    // Add the initial message to the list
-    setState(() {
-      messages.insert(0, initialMessage);
-    });
-
-    // Check if the message contains a file
-    File? file = widget.imageFile;
-
-    try {
-      // Send the API request with the initial message and file (if any)
-      String? responseText = await _sendApiRequest(initialMessage, file);
-      print("responseText: $responseText");
-
-      // Create a response message based on the API response
-      ChatMessage responseMessage = ChatMessage(
-        text: responseText ?? "No response from API",
-        user: queryBot,
-        createdAt: DateTime.now(),
-      );
-
-      // Add the response message to the list
-      setState(() {
-        messages.insert(0, responseMessage);
-      });
-    } catch (error) {
-      print("Error sending initial message: $error");
-    } finally {
-      setState(() {
-        isLoading = false; // Set loading state to false after API request is completed
-      });
-    }
+    _listen();
   }
 
   @override
@@ -120,15 +131,17 @@ class _ChatPageState extends State<ChatPage> {
       );
     }
     return DashChat(
-        inputOptions: InputOptions(trailing: [
+      inputOptions: InputOptions(
+        trailing: [
           IconButton(
-            icon: const Icon(Icons.mic, color: Colors.white),
+            icon: Icon(isListening ? Icons.mic : Icons.mic_none, color: Colors.white),
             onPressed: _listen,
           ),
-        ]),
-        currentUser: currentUser,
-        onSend: _sendMessage,
-        messages: messages
+        ],
+      ),
+      currentUser: currentUser,
+      onSend: _sendMessage,
+      messages: messages,
     );
   }
 
@@ -153,6 +166,7 @@ class _ChatPageState extends State<ChatPage> {
     String? responseText;
     responseText = await _sendApiRequest(userMessage, file);
     print("responseText: $responseText");
+    speak(responseText);
 
     // Create a response message and add it to the list
     ChatMessage responseMessage = ChatMessage(
@@ -168,7 +182,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<String> _sendApiRequest(ChatMessage chatMessage, File file) async {
-    var uri = Uri.parse('https://54e2-34-41-36-138.ngrok-free.app/chat');
+    var uri = Uri.parse('https://27d1-34-141-232-103.ngrok-free.app/chat');
     uri = uri.replace(queryParameters: {
       'prompt': chatMessage.text,
     });
@@ -192,29 +206,6 @@ class _ChatPageState extends State<ChatPage> {
     return 'text';
   }
 
-  // function for speech to text
-  void _listen() async {
-    final stt.SpeechToText speech = stt.SpeechToText();
-    bool available = await speech.initialize(
-      onStatus: (val) => print('onStatus: $val'),
-      onError: (val) => print('onError: $val'),
-    );
-    if (available) {
-      speech.listen(
-        onResult: (val) => setState(() {
-          messages.insert(
-              0,
-              ChatMessage(
-                text: val.recognizedWords,
-                user: currentUser,
-                createdAt: DateTime.now(),
-              ));
-        }),
-      );
-    } else {
-      print("The user has denied the use of speech recognition.");
-    }
-  }
 }
 
 MaterialColor getMaterialColor(Color color) {

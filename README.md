@@ -1,4 +1,4 @@
-# viz_assist
+# viz_assist (ImageSpeak)
 
 A new Flutter project.
 

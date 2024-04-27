@@ -25,30 +25,9 @@ class _HomePageState extends State<HomePage> {
   final double horizontalPadding = 40;
   final double verticalPadding = 25;
   String output = "";
+  String selectedLanguage = 'en';
+  // final List<String> languages = ['Select Language', 'Hindi', 'English', 'Japanese'];
 
-  @override
-  void initState() {
-    super.initState();
-    performTranslation();
-  }
-
-  Future<void>  translate(String src, String dest, String input) async {
-    GoogleTranslator translator = GoogleTranslator();
-    var translation = await translator.translate(input, from: src, to: dest);
-    setState(() {
-      output = translation.text.toString();
-      print("object");
-    });
-    if (src == '--' || dest == '--') {
-      setState(() {
-        output = 'Fail to translate';
-      });
-    }
-  }
-
-  void performTranslation() async {
-    void translatedText = await translate('en', 'ja', 'Hello, world!');
-  }
 
 
   // void temp = translate("en","ja","Hello");
@@ -98,21 +77,14 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // account icon
-                  IconButton(
-                    icon: Icon(
-                      Icons.translate,
-                      color: const Color(
-                          0xFF4D96AF), // Set the desired color for the icon
-                    ),
-                    iconSize: 30,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LanguageTranslationPage()),
-                      );
-                    },
+                  DropdownButton(
+                    items: const [
+                      // DropdownMenuItem(child: Text("English"),value: "en",),
+                      DropdownMenuItem(child: Text("Hindi"),value: "hi",),
+                      DropdownMenuItem(child: Text("Japanese"),value: "ja",),
+                    ], onChanged: (String? value) {  },
                   ),
+
                 ],
               ),
             ),

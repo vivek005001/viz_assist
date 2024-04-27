@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+
 class ChatPage extends StatefulWidget {
   const ChatPage(
       {Key? key, required this.imageFile, required this.initialMessage})

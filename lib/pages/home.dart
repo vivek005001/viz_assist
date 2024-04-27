@@ -58,11 +58,19 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // account icon
-                  // const Icon(
-                  //   Icons.person,
-                  //   size: 45,
-                  //   color: Color(0xFF539FB8),
-                  // )
+                  IconButton(
+                    icon: Icon(
+                      Icons.translate,
+                      color: const Color(0xFF4D96AF) , // Set the desired color for the icon
+                    ),
+                    iconSize: 30,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LanguageTranslationPage()),
+                      );
+                    },
+                  ),
 
                 ],
               ),

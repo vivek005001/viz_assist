@@ -13,7 +13,6 @@ import 'utils/splash.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Gemini.init(apiKey: GEMINI_API_KEY);
   final cameras = await availableCameras();
   runApp(MainApp(cameras: cameras));
 }
@@ -26,8 +25,9 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Splash(),
-      // home: ChatPage(),
+      home: CameraPage(
+        cameras: cameras,
+      ),
     );
   }
 }

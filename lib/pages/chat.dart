@@ -62,7 +62,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // chatList.insert(0, geminiModel);
     // setState(() {});
 
-    var request = http.MultipartRequest('POST', Uri.parse('https://ca57-34-87-42-19.ngrok-free.app/chat'));
+    var request = http.MultipartRequest('POST', Uri.parse('https://54e2-34-41-36-138.ngrok-free.app/chat'));
     request.files.add(http.MultipartFile.fromBytes('file', file?.readAsBytesSync() as Uint8List, filename: file?.path.split('/').last));
     request.fields['prompt'] = "What do you see in the image?";
     var streamedResponse = await request.send();

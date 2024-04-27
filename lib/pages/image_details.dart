@@ -7,6 +7,13 @@ import 'chat.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+speak(String text) async {
+  final FlutterTts flutterTts = FlutterTts();
+  await flutterTts.setLanguage("en-US");
+  await flutterTts.setPitch(1.25);
+  await flutterTts.speak(text);
+}
+
 class DetailsPage extends StatefulWidget {
   // requires imagePath
   const DetailsPage(
@@ -35,7 +42,7 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://11a3-34-136-92-15.ngrok-free.app/caption'));
+      'POST', Uri.parse('https://54e2-34-41-36-138.ngrok-free.app/caption'));
   request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();
@@ -47,6 +54,10 @@ Future<RequestResult> makeRequest(path, File file) async {
     print("Uploaded!");
     print("Description: $text");
     print("Title: $title");
+    speak(title);
+    // pause for 2 seconds
+    await Future.delayed(const Duration(seconds: 5));
+    speak(text);
     return RequestResult(text, title);
   } else {
     print("Failed to upload");
@@ -57,8 +68,6 @@ Future<RequestResult> makeRequest(path, File file) async {
 }
 
 class _DetailsPageState extends State<DetailsPage> {
-  final FlutterTts flutterTts = FlutterTts();
-
   RequestResult result =
       RequestResult(" Loading Description...", " Loading Title...");
 
@@ -83,12 +92,6 @@ class _DetailsPageState extends State<DetailsPage> {
     // get the image path
     final imagePath = widget.imagePath;
     final TextEditingController textController = TextEditingController();
-
-    speak(String text) async {
-      await flutterTts.setLanguage("en-US");
-      await flutterTts.setPitch(1.25);
-      await flutterTts.speak(text);
-    }
 
     return Scaffold(
       backgroundColor: const Color(0xff121012),

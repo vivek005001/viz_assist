@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   final double verticalPadding = 25;
   String output = "";
   String selectedLanguage = 'en';
+  String? destinationLanguage = "";
   // final List<String> languages = ['Select Language', 'Hindi', 'English', 'Japanese'];
 
 
@@ -77,12 +78,37 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // account icon
-                  DropdownButton(
-                    items: const [
-                      // DropdownMenuItem(child: Text("English"),value: "en",),
-                      DropdownMenuItem(child: Text("Hindi"),value: "hi",),
-                      DropdownMenuItem(child: Text("Japanese"),value: "ja",),
-                    ], onChanged: (String? value) {  },
+                  Theme(
+                    data: ThemeData(
+                      // canvasColor: Colors.black,
+
+
+                    ),
+
+                    child: DropdownButton(
+                      // value: destinationLanguage != null? destinationLanguage : null,
+                      focusColor: Colors.blueAccent,
+                      icon: Icon(Icons.translate,color: const Color(0xFF4D96AF),),
+                      // iconDisabledColor: Colors.grey,
+                      // iconEnabledColor: Colors.white,
+
+                      items: const [
+
+
+                        // DropdownMenuItem(child: Text("English"),value: "en",),
+                        DropdownMenuItem(
+
+                          child: Text("Hindi", style: TextStyle( color: const Color(0xFF4D96AF),)),
+                          value: "hi",
+                        ),
+                        DropdownMenuItem(
+                          child: Text("Japanese", style: TextStyle(color: const Color(0xFF4D96AF),)),
+                          value: "ja",
+                        ),
+
+                      ], onChanged: (String? value) { destinationLanguage = value;
+                        print(destinationLanguage);},
+                    ),
                   ),
 
                 ],

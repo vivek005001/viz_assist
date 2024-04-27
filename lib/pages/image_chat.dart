@@ -118,6 +118,7 @@ class _ChatPageState extends State<ChatPage> {
 
         // Swiping in left direction.
         if (details.delta.dx < 0) {
+          isListening = false;
           _listen();
         }
       },

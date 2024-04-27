@@ -7,6 +7,16 @@ import 'package:gap/gap.dart';
 import 'package:media_scanner/media_scanner.dart';
 import 'package:path_provider/path_provider.dart';
 import 'image_details.dart';
+import 'package:shake/shake.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+
+speak(String text) async {
+  final FlutterTts flutterTts = FlutterTts();
+  await flutterTts.setLanguage("en-US");
+  await flutterTts.setPitch(1.25);
+  await flutterTts.speak(text);
+}
+
 
 class CameraPage extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -58,6 +68,7 @@ class _CameraPageState extends State<CameraPage> {
     }
 
     final file = await saveImage(image);
+    speak("Picture captured successfully!");
     setState(() {
       imagesList.add(file);
     });
@@ -85,6 +96,24 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     startCamera(0);
+    speak("Shake your phone or Double tap on the screen to take a picture");
+    ShakeDetector detector = ShakeDetector.autoStart(
+      onPhoneShake: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Shake!'),
+          ),
+        );
+        takePicture();
+        // Do stuff on phone shake
+      },
+      minimumShakeCount: 1,
+      shakeSlopTimeMS: 500,
+      shakeCountResetTime: 3000,
+      shakeThresholdGravity: 2.7,
+    );
+
+    detector.startListening();
     super.initState();
   }
 
@@ -97,7 +126,12 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Scaffold(
+
+    return GestureDetector(
+      onDoubleTap: () {
+        takePicture();
+      },
+      child: Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(255, 255, 255, .7),
         shape: const CircleBorder(),
@@ -203,6 +237,7 @@ class _CameraPageState extends State<CameraPage> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

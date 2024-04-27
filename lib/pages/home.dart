@@ -5,7 +5,6 @@ import '/utils/smart_device_box.dart';
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -81,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                     'Luv Sharma',
                     style: TextStyle(
                       fontFamily: GoogleFonts.bebasNeue().fontFamily,
-                      fontSize: 72,
+                      fontSize: 56,
                       color: const Color(0xFF4D96AF),
                     ),
                   ),
@@ -127,7 +126,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 itemBuilder: (context, index) {
                   // Check if index is 0 or 1, if yes, set transparent color
-                  final color = index == 1 || index == 2 ? Colors.transparent : null;
+                  final color =
+                      index == 1 || index == 2 ? Colors.transparent : null;
                   return SmartDeviceBox(
                     smartDeviceName: mySmartDevices[index][0],
                     iconPath: mySmartDevices[index][1],

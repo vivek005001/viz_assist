@@ -27,7 +27,6 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Splash(),
-
       // home: ChatPage(),
     );
   }

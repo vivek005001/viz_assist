@@ -125,7 +125,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         Container(
                           height: MediaQuery.of(context).size.height * 0.50,
                           alignment: Alignment.center,
-                          child: LoadingAnimationWidget.staggeredDotsWave(
+                          child: LoadingAnimationWidget.threeRotatingDots(
                             color: Colors.white,
                             size: 100,
                           ),

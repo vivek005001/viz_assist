@@ -83,26 +83,26 @@ class SmartDeviceBox extends StatelessWidget {
               return image;
             }
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FutureBuilder<XFile?>(
-                  future: getImage(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return DetailsPage(
-
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    }
-
-                    // Display a loading indicator while waiting
-                    return const CircularProgressIndicator();
-                  },
-                ),
-              ),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => FutureBuilder<XFile?>(
+            //       future: getImage(),
+            //       builder: (context, snapshot) {
+            //         if (snapshot.hasData) {
+            //           return DetailsPage(
+            //
+            //           );
+            //         } else if (snapshot.hasError) {
+            //           return Text('Error: ${snapshot.error}');
+            //         }
+            //
+            //         // Display a loading indicator while waiting
+            //         return const CircularProgressIndicator();
+            //       },
+            //     ),
+            //   ),
+            // );
           }
 
         },
@@ -132,31 +132,37 @@ class SmartDeviceBox extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Image.asset(
-                    iconPath,
-                    height: (index == 0 || index == 3) ? 65 : 125,
-                    color: powerOn ? Colors.white : Colors.white60,
+                Flexible(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Image.asset(
+                      iconPath,
+                      height: (index == 0 || index == 3) ? 65 : 125,
+                      color: powerOn ? Colors.white : Colors.white60,
+                    ),
                   ),
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 25.0),
-                        child: Text(
-                          smartDeviceName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                            color: powerOn ? Colors.white : Colors.white60,
+                Flexible(
+                  flex: 2,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 25.0),
+                          child: Text(
+                            smartDeviceName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                              color: powerOn ? Colors.white : Colors.white60,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

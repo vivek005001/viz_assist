@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '/pages/camera_page.dart';
 
 class SmartDeviceBox extends StatelessWidget {
   final String smartDeviceName;
@@ -9,8 +11,9 @@ class SmartDeviceBox extends StatelessWidget {
   final void Function(bool)? onChanged;
   final int index;
   final Color? customColor; // New attribute for custom color
+  final List<CameraDescription> cameras = [];
 
-  const SmartDeviceBox({
+  SmartDeviceBox({
     super.key, // Added key parameter
     required this.smartDeviceName,
     required this.iconPath,
@@ -18,7 +21,14 @@ class SmartDeviceBox extends StatelessWidget {
     required this.onChanged,
     required this.index,
     this.customColor, // Initialized customColor parameter
-  }); // Calling super constructor with key parameter
+  });
+
+  Future<void> main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    // Gemini.init(apiKey: GEMINI_API_KEY);
+    final cameras = await availableCameras();
+    // runApp(MainApp(cameras: cameras));
+  }
 
   void handle(bool b) {
     if (onChanged != null) {
@@ -36,6 +46,31 @@ class SmartDeviceBox extends StatelessWidget {
         onTap: () {
           if (index == 0 || index == 3) {
             handle(true);
+          }
+          if (index == 0) {
+            Future<List<CameraDescription>> getCameras() async {
+              WidgetsFlutterBinding.ensureInitialized();
+              return await availableCameras();
+            }
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FutureBuilder<List<CameraDescription>>(
+                  future: getCameras(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return CameraPage(cameras: snapshot.data!);
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    // Display a loading indicator while waiting
+                    return const CircularProgressIndicator();
+                  },
+                ),
+              ),
+            );
           }
         },
         child: Container(
@@ -91,3 +126,5 @@ class SmartDeviceBox extends StatelessWidget {
     );
   }
   }
+
+

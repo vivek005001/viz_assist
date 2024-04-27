@@ -14,7 +14,6 @@ speak(String text) async {
   await flutterTts.speak(text);
 }
 
-
 class ChatPage extends StatefulWidget {
   const ChatPage(
       {Key? key, required this.imageFile, required this.initialMessage})
@@ -55,6 +54,7 @@ class _ChatPageState extends State<ChatPage> {
                   createdAt: DateTime.now(),
                 );
                 _sendMessage(newMessage);
+                setState(() => isListening = false);
                 recognizedText = ''; // Reset the recognized text
                 if (val.hasConfidenceRating && val.confidence > 0) {
                   _confidence = val.confidence;
@@ -70,7 +70,10 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  ChatUser currentUser = ChatUser(id: '0', firstName: 'Me');
+  ChatUser currentUser = ChatUser(
+    id: '0',
+    firstName: 'Me',
+  );
   ChatUser queryBot = ChatUser(
       id: '1',
       firstName: 'VizAssist',
@@ -115,7 +118,15 @@ class _ChatPageState extends State<ChatPage> {
           centerTitle: true,
           title: const Text('VizAssist: Chat'),
         ),
-        body: _buildUI(),
+        body: isListening
+            ? Center(
+                child:
+                LoadingAnimationWidget.waveDots(
+                  color: Colors.white,
+                  size: 100,
+                ), // Replace with your desired animation
+              )
+            : _buildUI(),
       ),
     );
   }
@@ -133,7 +144,8 @@ class _ChatPageState extends State<ChatPage> {
       inputOptions: InputOptions(
         trailing: [
           IconButton(
-            icon: Icon(isListening ? Icons.mic : Icons.mic_none, color: Colors.white),
+            icon: Icon(isListening ? Icons.mic : Icons.mic_none,
+                color: Colors.white),
             onPressed: _listen,
           ),
         ],
@@ -175,7 +187,8 @@ class _ChatPageState extends State<ChatPage> {
     );
 
     setState(() {
-      isLoading = false; // Set loading state to false after API request is completed
+      isLoading =
+          false; // Set loading state to false after API request is completed
       messages.insert(0, responseMessage);
     });
   }
@@ -204,7 +217,6 @@ class _ChatPageState extends State<ChatPage> {
     }
     return 'text';
   }
-
 }
 
 MaterialColor getMaterialColor(Color color) {

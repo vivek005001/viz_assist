@@ -132,7 +132,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             ),
                           ),
                           width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.70,
+                          height: MediaQuery.of(context).size.height * 0.75,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               image: FileImage(File(imagePath)),

@@ -9,11 +9,10 @@ import 'pages/home_page.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'pages/consts.dart';
 import 'pages/image_chat.dart';
-
+import 'utils/splash.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Gemini.init(apiKey: GEMINI_API_KEY);
   final cameras = await availableCameras();
   runApp(MainApp(cameras: cameras));
 }
@@ -26,22 +25,9 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AnimatedSplashScreen(splash: Center(
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Image.asset(
-            'lib/icons/icon.png',
-            width: 80,
-            height: 80,
-          ),
-        ),
-
-      ),nextScreen: HomePage(),),
-
-      // home: ChatPage(),
+      home: CameraPage(
+        cameras: cameras,
+      ),
     );
   }
 }
-
-
-

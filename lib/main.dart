@@ -25,8 +25,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CameraPage(
-        cameras: cameras,
+      home: Splash(
+        // cameras: cameras,
       ),
     );
   }

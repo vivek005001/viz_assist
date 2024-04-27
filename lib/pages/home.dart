@@ -14,21 +14,21 @@ class _HomePageState extends State<HomePage> {
   final double horizontalPadding = 40;
   final double verticalPadding = 25;
 
-  // list of smart devices
-  List mySmartDevices = [
-    // [ smartDeviceName, iconPath , powerStatus ]
-    ["Use Camera", "lib/icons/camera.png", false],
-    ["", "lib/icons/use_camera.png", false],
-    ["", "lib/icons/fan.png", false],
-    ["Upload Image", "lib/icons/document.png", false],
-  ];
+  // // list of smart devices
+  // List mySmartDevices = [
+  //   // [ smartDeviceName, iconPath , powerStatus ]
+  //   ["Use Camera", "lib/icons/camera.png", false],
+  //   ["", "lib/icons/use_camera.png", false],
+  //   ["", "lib/icons/fan.png", false],
+  //   ["Upload Image", "lib/icons/document.png", false],
+  // ];
 
   // power button switched
-  void powerSwitchChanged(bool value, int index) {
-    setState(() {
-      mySmartDevices[index][2] = value;
-    });
-  }
+  // void powerSwitchChanged(bool value, int index) {
+  //   setState(() {
+  //     mySmartDevices[index][2] = value;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -73,14 +73,14 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Welcome Home,",
+                    "Welcome",
                     style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
                   ),
                   Text(
-                    'Luv Sharma',
+                    'Vivek Aggarwal',
                     style: TextStyle(
                       fontFamily: GoogleFonts.bebasNeue().fontFamily,
-                      fontSize: 56,
+                      fontSize: 62,
                       color: const Color(0xFF4D96AF),
                     ),
                   ),
@@ -104,41 +104,76 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Text(
-                "UTILITY FEATURES",
+                "IMAGE SPEAK",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: Colors.grey.shade800,
+                  fontSize: 30,
+                  color: Colors.white,
                 ),
               ),
             ),
             const SizedBox(height: 10),
-
-            // grid
-            Expanded(
-              child: GridView.builder(
-                itemCount: 4,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1 / 1.3,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              child: Text(
+                "Empowering the visually impaired with the language of images, providing access to a world of visual information through spoken captions",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  color: Colors.grey.shade600,
                 ),
-                itemBuilder: (context, index) {
-                  // Check if index is 0 or 1, if yes, set transparent color
-                  final color =
-                      index == 1 || index == 2 ? Colors.transparent : null;
-                  return SmartDeviceBox(
-                    smartDeviceName: mySmartDevices[index][0],
-                    iconPath: mySmartDevices[index][1],
-                    powerOn: mySmartDevices[index][2],
-                    onChanged: (value) => powerSwitchChanged(value, index),
-                    index: index,
-                    customColor: color,
-                  );
-                },
               ),
-            )
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: 100), // Adjust the top padding value as needed
+              child: Container(
+                alignment: Alignment.center,
+                child: Image.asset(
+                  'lib/icons/camera.png',
+                  height: 80,
+                  width: 80,
+                  color: const Color(0xFF4D96AF),
+                  // specify other parameters like width, height, etc. as needed
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: verticalPadding,horizontal: horizontalPadding),
+              child: Text(
+                "Double Tap Anywhere to Enable Camera",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ),
+            // grid
+            // Expanded(
+            //   child: GridView.builder(
+            //     itemCount: 4,
+            //     physics: const NeverScrollableScrollPhysics(),
+            //     padding: const EdgeInsets.symmetric(horizontal: 20),
+            //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            //       crossAxisCount: 2,
+            //       childAspectRatio: 1 / 1.3,
+            //     ),
+            //     itemBuilder: (context, index) {
+            //       // Check if index is 0 or 1, if yes, set transparent color
+            //       final color =
+            //           index == 1 || index == 2 ? Colors.transparent : null;
+            //       // return SmartDeviceBox(
+            //       //   smartDeviceName: mySmartDevices[index][0],
+            //       //   iconPath: mySmartDevices[index][1],
+            //       //   powerOn: mySmartDevices[index][2],
+            //       //   onChanged: (value) => powerSwitchChanged(value, index),
+            //       //   index: index,
+            //       //   customColor: color,
+            //       // );
+            //     },
+            //   ),
+            // )
           ],
         ),
       ),

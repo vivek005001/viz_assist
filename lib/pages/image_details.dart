@@ -129,8 +129,8 @@ class _DetailsPageState extends State<DetailsPage> {
                           height: MediaQuery.of(context).size.height * 0.50,
                           alignment: Alignment.center,
                           child: LoadingAnimationWidget.threeRotatingDots(
-                            color: Colors.white,
-                            size: 100,
+                            color: const Color(0xFF4D96AF),
+                            size: 80,
                           ),
                         )
                       else
@@ -301,7 +301,7 @@ class _DetailsPageState extends State<DetailsPage> {
                             ),
                             child: const Icon(
                               Icons.send,
-                              color: Colors.white,
+                              color: const Color(0xFF4D96AF),
                             ),
                           ),
                         ),

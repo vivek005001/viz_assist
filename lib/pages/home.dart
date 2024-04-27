@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_speak/utils/translation_page.dart';
+import 'package:lottie/lottie.dart';
 import '/utils/smart_device_box.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
-
-
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -61,17 +61,18 @@ class _HomePageState extends State<HomePage> {
                   IconButton(
                     icon: Icon(
                       Icons.translate,
-                      color: const Color(0xFF4D96AF) , // Set the desired color for the icon
+                      color: const Color(
+                          0xFF4D96AF), // Set the desired color for the icon
                     ),
                     iconSize: 30,
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => LanguageTranslationPage()),
+                        MaterialPageRoute(
+                            builder: (context) => LanguageTranslationPage()),
                       );
                     },
                   ),
-
                 ],
               ),
             ),
@@ -88,12 +89,21 @@ class _HomePageState extends State<HomePage> {
                     "Welcome",
                     style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
                   ),
-                  Text(
-                    'Vivek Aggarwal',
-                    style: TextStyle(
-                      fontFamily: GoogleFonts.bebasNeue().fontFamily,
-                      fontSize: 62,
-                      color: const Color(0xFF4D96AF),
+                  Container(
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        TyperAnimatedText(
+                          'Vivek Aggarwal',
+                          textStyle: TextStyle(
+                            fontFamily: GoogleFonts.bebasNeue().fontFamily,
+                            fontSize: 62,
+                            color: const Color(0xFF4D96AF),
+                          ),
+                          speed: const Duration(milliseconds: 150),
+                        ),
+                      ],
+                      totalRepeatCount: 1,
+
                     ),
                   ),
                 ],
@@ -141,17 +151,24 @@ class _HomePageState extends State<HomePage> {
                   top: 100), // Adjust the top padding value as needed
               child: Container(
                 alignment: Alignment.center,
-                child: Image.asset(
-                  'lib/icons/camera.png',
+                child: Lottie.asset(
+                  "assets/animations/camera.json",
+                  repeat: true,
                   height: 80,
                   width: 80,
-                  color: const Color(0xFF4D96AF),
-                  // specify other parameters like width, height, etc. as needed
                 ),
+                // Image.asset(
+                //   'lib/icons/camera.png',
+                //   height: 80,
+                //   width: 80,
+                //   color: const Color(0xFF4D96AF),
+                //   // specify other parameters like width, height, etc. as needed
+                // ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: verticalPadding,horizontal: horizontalPadding),
+              padding: EdgeInsets.symmetric(
+                  vertical: verticalPadding, horizontal: horizontalPadding),
               child: Text(
                 "Double Tap Anywhere to Enable Camera",
                 style: TextStyle(

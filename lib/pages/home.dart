@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_speak/utils/translation_page.dart';
 import '/utils/smart_device_box.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -55,11 +58,12 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // account icon
-                  const Icon(
-                    Icons.person,
-                    size: 45,
-                    color: Color(0xFF539FB8),
-                  )
+                  // const Icon(
+                  //   Icons.person,
+                  //   size: 45,
+                  //   color: Color(0xFF539FB8),
+                  // )
+
                 ],
               ),
             ),

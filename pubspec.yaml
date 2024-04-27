@@ -60,6 +60,7 @@ dependencies:
   animated_splash_screen:
   shake: ^2.2.0
   lottie: ^3.0.0
+  translator: ^1.0.0
 
 dev_dependencies:
   flutter_test:

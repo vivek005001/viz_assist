@@ -97,7 +97,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     startCamera(0);
-    speak("Welcome to ImageSpeak. Double tap on the screen or press the Camera button to take a picture");
+    speak("Double tap on the screen or press the Camera button to take a picture");
     super.initState();
   }
 

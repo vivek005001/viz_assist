@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_speak/pages/camera_page.dart';
 import '../utils/translation_page.dart';
@@ -7,6 +8,13 @@ import 'package:lottie/lottie.dart';
 import '/utils/smart_device_box.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:translator/translator.dart';
+
+speak(String text) async {
+  final FlutterTts flutterTts = FlutterTts();
+  await flutterTts.setLanguage("en-US");
+  await flutterTts.setPitch(1.25);
+  await flutterTts.speak(text);
+}
 
 
 class HomePage extends StatefulWidget {
@@ -32,6 +40,12 @@ class _HomePageState extends State<HomePage> {
     {'name': 'Hindi ', 'code': 'hi'},
     {'name': 'Japanese ', 'code': 'ja'},
   ];
+
+  @override
+  void initState() {
+    speak("Welcome to ImageSpeak. Double tap anywhere to enable camera");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

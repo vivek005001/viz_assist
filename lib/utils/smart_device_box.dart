@@ -113,17 +113,17 @@ class SmartDeviceBox extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             gradient: customColor == null // Checking if customColor is provided
                 ? LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      powerOn
-                          ? const Color(0xFF4D90A6)
-                          : const Color(0xFF539FB8),
-                      powerOn
-                          ? const Color(0xFF01516C)
-                          : const Color(0xFF006789),
-                    ],
-                  )
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                powerOn
+                    ? const Color(0xFF4D90A6)
+                    : const Color(0xFF539FB8),
+                powerOn
+                    ? const Color(0xFF01516C)
+                    : const Color(0xFF006789),
+              ],
+            )
                 : null, // Setting gradient to null if customColor is provided
             color: customColor, // Using customColor if provided
           ),

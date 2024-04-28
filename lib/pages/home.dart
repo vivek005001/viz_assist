@@ -1,9 +1,17 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_speak/pages/camera_page.dart';
+import '../utils/translation_page.dart';
+import 'package:lottie/lottie.dart';
 import '/utils/smart_device_box.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:translator/translator.dart';
+
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key, required this.cameras});
+  final List<CameraDescription> cameras;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -13,28 +21,31 @@ class _HomePageState extends State<HomePage> {
   // padding constants
   final double horizontalPadding = 40;
   final double verticalPadding = 25;
+  String output = "";
+  String selectedLanguage = 'en';
+  String? destinationLanguage = "";
+  // final List<String> languages = ['Select Language', 'Hindi', 'English', 'Japanese'];
 
-  // // list of smart devices
-  // List mySmartDevices = [
-  //   // [ smartDeviceName, iconPath , powerStatus ]
-  //   ["Use Camera", "lib/icons/camera.png", false],
-  //   ["", "lib/icons/use_camera.png", false],
-  //   ["", "lib/icons/fan.png", false],
-  //   ["Upload Image", "lib/icons/document.png", false],
-  // ];
 
-  // power button switched
-  // void powerSwitchChanged(bool value, int index) {
-  //   setState(() {
-  //     mySmartDevices[index][2] = value;
-  //   });
-  // }
+
+  // void temp = translate("en","ja","Hello");
+
 
   @override
+
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GestureDetector(
+      onDoubleTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CameraPage(cameras: widget.cameras),
+          ),
+        );
+      },
+      child: Scaffold(
       backgroundColor: const Color(0xFF0D0D0D),
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -55,11 +66,39 @@ class _HomePageState extends State<HomePage> {
                   ),
 
                   // account icon
-                  const Icon(
-                    Icons.person,
-                    size: 45,
-                    color: Color(0xFF539FB8),
-                  )
+                  Theme(
+                    data: ThemeData(
+                      // canvasColor: Colors.black,
+
+
+                    ),
+
+                    child: DropdownButton(
+                      // value: destinationLanguage != null? destinationLanguage : null,
+                      focusColor: Colors.blueAccent,
+                      icon: Icon(Icons.translate,color: const Color(0xFF4D96AF),),
+                      // iconDisabledColor: Colors.grey,
+                      // iconEnabledColor: Colors.white,
+
+                      items: const [
+
+
+                        // DropdownMenuItem(child: Text("English"),value: "en",),
+                        DropdownMenuItem(
+
+                          child: Text("Hindi", style: TextStyle( color: const Color(0xFF4D96AF),)),
+                          value: "hi",
+                        ),
+                        DropdownMenuItem(
+                          child: Text("Japanese", style: TextStyle(color: const Color(0xFF4D96AF),)),
+                          value: "ja",
+                        ),
+
+                      ], onChanged: (String? value) { destinationLanguage = value;
+                    print(destinationLanguage);},
+                    ),
+                  ),
+
                 ],
               ),
             ),
@@ -71,17 +110,28 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
+
                   Text(
-                    "Welcome",
+
+                    'Hello',
                     style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
                   ),
-                  Text(
-                    'Vivek Aggarwal',
-                    style: TextStyle(
-                      fontFamily: GoogleFonts.bebasNeue().fontFamily,
-                      fontSize: 62,
-                      color: const Color(0xFF4D96AF),
+                  Container(
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        TyperAnimatedText(
+                          'Vivek Aggarwal',
+                          textStyle: TextStyle(
+                            fontFamily: GoogleFonts.bebasNeue().fontFamily,
+                            fontSize: 62,
+                            color: const Color(0xFF4D96AF),
+                          ),
+                          speed: const Duration(milliseconds: 150),
+                        ),
+                      ],
+                      totalRepeatCount: 1,
+
                     ),
                   ),
                 ],
@@ -129,17 +179,24 @@ class _HomePageState extends State<HomePage> {
                   top: 100), // Adjust the top padding value as needed
               child: Container(
                 alignment: Alignment.center,
-                child: Image.asset(
-                  'lib/icons/camera.png',
+                child: Lottie.asset(
+                  "assets/animations/camera.json",
+                  repeat: true,
                   height: 80,
                   width: 80,
-                  color: const Color(0xFF4D96AF),
-                  // specify other parameters like width, height, etc. as needed
                 ),
+                // Image.asset(
+                //   'lib/icons/camera.png',
+                //   height: 80,
+                //   width: 80,
+                //   color: const Color(0xFF4D96AF),
+                //   // specify other parameters like width, height, etc. as needed
+                // ),
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: verticalPadding,horizontal: horizontalPadding),
+              padding: EdgeInsets.symmetric(
+                  vertical: verticalPadding, horizontal: horizontalPadding),
               child: Text(
                 "Double Tap Anywhere to Enable Camera",
                 style: TextStyle(
@@ -176,6 +233,7 @@ class _HomePageState extends State<HomePage> {
             // )
           ],
         ),
+      ),
       ),
     );
   }

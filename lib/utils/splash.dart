@@ -1,8 +1,10 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_speak/pages/home.dart';
 
 class Splash extends StatefulWidget {
-  const Splash({Key? key}) : super(key: key);
+  const Splash({super.key, required this.cameras});
+  final List<CameraDescription> cameras;
 
   @override
   _SplashState createState() => _SplashState();
@@ -19,7 +21,7 @@ class _SplashState extends State<Splash> {
     await Future.delayed(
         Duration(milliseconds: 1500)); // Adjust delay duration as needed
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => HomePage()));
+        context, MaterialPageRoute(builder: (context) => HomePage(cameras: widget.cameras,)));
   }
 
   @override

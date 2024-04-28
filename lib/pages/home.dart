@@ -23,85 +23,82 @@ class _HomePageState extends State<HomePage> {
   final double verticalPadding = 25;
   String output = "";
   String selectedLanguage = 'en';
-  String? destinationLanguage = "";
-  // final List<String> languages = ['Select Language', 'Hindi', 'English', 'Japanese'];
+  String? destinationLanguage = null; // Initialize with null
+  String destCopy = "";
 
-
-
-  // void temp = translate("en","ja","Hello");
-
+  // List of language options
+  final List<Map<String, String>> languages = [
+    {'name': 'English ', 'code': 'en'},
+    {'name': 'Hindi ', 'code': 'hi'},
+    {'name': 'Japanese ', 'code': 'ja'},
+  ];
 
   @override
-
   Widget build(BuildContext context) {
     return GestureDetector(
       onDoubleTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CameraPage(cameras: widget.cameras),
+            builder: (context) => CameraPage(cameras: widget.cameras, destinationLanguage: destCopy),
           ),
         );
       },
       child: Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // app bar
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-                vertical: verticalPadding,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // menu icon
-                  Image.asset(
-                    'lib/icons/menu.png',
-                    height: 45,
-                    // color: Colors.grey[800],
-                  ),
-
-                  // account icon
-                  Theme(
-                    data: ThemeData(
-                      // canvasColor: Colors.black,
-
-
+        backgroundColor: const Color(0xFF0D0D0D),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // app bar
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: verticalPadding,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // menu icon
+                    Image.asset(
+                      'lib/icons/menu.png',
+                      height: 45,
                     ),
-
-                    child: DropdownButton(
-                      // value: destinationLanguage != null? destinationLanguage : null,
-                      focusColor: Colors.blueAccent,
-                      icon: Icon(Icons.translate,color: const Color(0xFF4D96AF),),
-                      // iconDisabledColor: Colors.grey,
-                      // iconEnabledColor: Colors.white,
-
-                      items: const [
-
-
-                        // DropdownMenuItem(child: Text("English"),value: "en",),
-                        DropdownMenuItem(
-
-                          child: Text("Hindi", style: TextStyle( color: const Color(0xFF4D96AF),)),
-                          value: "hi",
+                    // account icon
+                    Theme(
+                      data: ThemeData(
+                        canvasColor: Colors.black,
+                      ),
+                      child: DropdownButton<String>(
+                        value: destinationLanguage, // Set the currently selected language
+                        focusColor: Colors.blueAccent,
+                        icon: Icon(
+                          Icons.translate,
+                          color: const Color(0xFF4D96AF),
                         ),
-                        DropdownMenuItem(
-                          child: Text("Japanese", style: TextStyle(color: const Color(0xFF4D96AF),)),
-                          value: "ja",
-                        ),
-
-                      ], onChanged: (String? value) { destinationLanguage = value;
-                    print(destinationLanguage);},
+                        items: languages.map((language) {
+                          return DropdownMenuItem<String>(
+                            value: language['code'],
+                            child: Text(
+                              language['name']!,
+                              style: TextStyle(
+                                color: const Color(0xFF4D96AF),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            destinationLanguage = value; // Update destinationLanguage with the selected value
+                            destCopy = value!;
+                          });
+                          print(destinationLanguage);
+                        },
+                      ),
                     ),
-                  ),
-
-                ],
+                  ],
+                ),
               ),
-            ),
 
             const SizedBox(height: 20),
 
@@ -111,9 +108,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-
                   Text(
-
                     'Hello',
                     style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
                   ),
@@ -131,7 +126,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                       totalRepeatCount: 1,
-
                     ),
                   ),
                 ],
@@ -185,13 +179,6 @@ class _HomePageState extends State<HomePage> {
                   height: 80,
                   width: 80,
                 ),
-                // Image.asset(
-                //   'lib/icons/camera.png',
-                //   height: 80,
-                //   width: 80,
-                //   color: const Color(0xFF4D96AF),
-                //   // specify other parameters like width, height, etc. as needed
-                // ),
               ),
             ),
             Padding(

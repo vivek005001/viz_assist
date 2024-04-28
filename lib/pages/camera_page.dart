@@ -20,7 +20,8 @@ speak(String text) async {
 
 class CameraPage extends StatefulWidget {
   final List<CameraDescription> cameras;
-  const CameraPage({super.key, required this.cameras});
+  const CameraPage({super.key, required this.cameras, required this.destinationLanguage});
+  final String destinationLanguage;
 
   @override
   State<CameraPage> createState() => _CameraPageState();
@@ -79,6 +80,7 @@ class _CameraPageState extends State<CameraPage> {
         builder: (context) => DetailsPage(
           imagePath: file.path,
           imageFile: file,
+          destinationLanguage: widget.destinationLanguage,
         ),
       ),
     );

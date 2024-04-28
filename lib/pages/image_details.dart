@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_speak/pages/image_chat.dart';
 import 'package:image_speak/pages/voice_chat.dart';
+import 'package:krutidevtounicode/krutidevtounicode.dart';
+import 'package:text_to_speech/text_to_speech.dart';
+import 'package:translator/translator.dart';
 import 'chat.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -11,18 +14,49 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 speak(String text) async {
   final FlutterTts flutterTts = FlutterTts();
-  await flutterTts.setLanguage("en-US");
+
+  await flutterTts.getEngines;
+
+  List<dynamic> languages = await flutterTts.getLanguages;
+  print(languages);
+  var isLanguageAvailable = await flutterTts.isLanguageAvailable('ja-JP');
+  if(isLanguageAvailable) {
+    print("Language is available");
+  } else {
+    print("Language is not available");
+  }
+
+  await flutterTts.isLanguageInstalled("ja-JP");
   await flutterTts.setPitch(1.25);
-  await flutterTts.speak(text);
+  await flutterTts.setVoice({"name": "Karen", "locale": "ja-JP"});
+  await flutterTts.setLanguage("ja-JP");
+  await flutterTts.speak(text); // नमस्ते
+}
+
+Future<String> translate(String src, String dest, String input) async {
+  GoogleTranslator translator = GoogleTranslator();
+  String output = "";
+  var translation = await translator.translate(input, from: src, to: dest);
+    output = translation.text.toString();
+    print("object");
+  if (src == '--' || dest == '--') {
+      output = 'Fail to translate';
+  }
+  return output;
+}
+
+Future<String> performTranslation(String dest,String inp) async {
+  return await translate('en', dest, inp);
 }
 
 class DetailsPage extends StatefulWidget {
   // requires imagePath
   const DetailsPage(
-      {Key? key, required this.imagePath, required this.imageFile})
+      {Key? key, required this.imagePath, required this.imageFile, required this.destinationLanguage})
       : super(key: key);
   final String imagePath;
   final File imageFile;
+  final String destinationLanguage;
 
   @override
   State<DetailsPage> createState() => _DetailsPageState();
@@ -44,7 +78,7 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://6fa9-35-240-251-114.ngrok-free.app/caption'));
+      'POST', Uri.parse('https://9b20-34-141-167-252.ngrok-free.app/caption'));
   request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();
@@ -54,6 +88,8 @@ Future<RequestResult> makeRequest(path, File file) async {
   if (res.statusCode == 200) {
     print("Uploaded!");
     print("Title: $title");
+    title = await performTranslation('ja', title);
+    print("Translated Title: $title");
     speak(title);
     return RequestResult('', title);
   } else {

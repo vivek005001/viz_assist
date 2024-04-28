@@ -17,7 +17,6 @@ speak(String text) async {
   await flutterTts.speak(text);
 }
 
-
 class CameraPage extends StatefulWidget {
   final List<CameraDescription> cameras;
   const CameraPage({super.key, required this.cameras, required this.destinationLanguage});

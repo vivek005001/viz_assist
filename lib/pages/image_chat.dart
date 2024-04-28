@@ -9,19 +9,59 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:translator/translator.dart';
 
 
-speak(String text) async {
+speak(String text, String dest) async {
   final FlutterTts flutterTts = FlutterTts();
-  await flutterTts.setLanguage("en-US");
+
+  await flutterTts.getEngines;
+
+  List<dynamic> languages = await flutterTts.getLanguages;
+  print(languages);
+  var isLanguageAvailable = await flutterTts.isLanguageAvailable('ja-JP');
+  if(isLanguageAvailable) {
+    print("Language is available");
+  } else {
+    print("Language is not available");
+  }
+
+  // await flutterTts.isLanguageInstalled("ja-JP");
   await flutterTts.setPitch(1.25);
-  await flutterTts.speak(text);
+  if(dest == 'ja') {
+    await flutterTts.setVoice({"name": "Karen", "locale": "ja-JP"});
+    await flutterTts.setLanguage("ja-JP");
+  }
+  else if(dest == 'hi') {
+    await flutterTts.setVoice({"name": "Karen", "locale": "hi-IN"});
+    await flutterTts.setLanguage("hi-IN");
+  }
+  else {
+    await flutterTts.setLanguage("en-US");
+  }
+  await flutterTts.speak(text); // नमस्ते
+}
+
+Future<String> translate(String src, String dest, String input) async {
+  GoogleTranslator translator = GoogleTranslator();
+  String output = "";
+  var translation = await translator.translate(input, from: src, to: dest);
+  output = translation.text.toString();
+  print("object");
+  if (src == '--' || dest == '--') {
+    output = 'Fail to translate';
+  }
+  return output;
+}
+
+Future<String> performTranslation(String dest,String inp) async {
+  return await translate('en', dest, inp);
 }
 
 class ChatPage extends StatefulWidget {
   const ChatPage(
-      {Key? key, required this.imageFile, required this.initialMessage})
+      {Key? key, required this.imageFile, required this.initialMessage, required this.destinationLanguage})
       : super(key: key);
   final File imageFile;
   final String initialMessage;
+  final String destinationLanguage;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -37,27 +77,6 @@ class _ChatPageState extends State<ChatPage> {
   //   super.initState();
   //   performTranslation();
   // }
-
-  Future<String>  translate(String src, String dest, String input) async {
-    GoogleTranslator translator = GoogleTranslator();
-    String output = "";
-    var translation = await translator.translate(input, from: src, to: dest);
-    setState(() {
-      output = translation.text.toString();
-      print("object");
-    });
-    if (src == '--' || dest == '--') {
-      setState(() {
-        output = 'Fail to translate';
-      });
-    }
-
-    return output;
-  }
-
-  Future<String> performTranslation(String dest,String inp) async {
-    return await translate('en', dest, inp);
-  }
 
   final stt.SpeechToText _speech = stt.SpeechToText();
   bool isListening = false;
@@ -75,7 +94,7 @@ class _ChatPageState extends State<ChatPage> {
         String recognizedText = '';
         _speech.listen(
           onResult: (val) {
-            setState(() {
+            setState(() async {
               recognizedText = val.recognizedWords;
               print("RECOGNIZED: $recognizedText");
               if (val.finalResult) {
@@ -107,12 +126,12 @@ class _ChatPageState extends State<ChatPage> {
   );
   ChatUser queryBot = ChatUser(
       id: '1',
-      firstName: 'Image Speak',
+      firstName: 'ImageSpeak',
       profileImage:
           'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png'); // Add a profile image
   ChatMessage initialChatMessage = ChatMessage(
     text: 'Hello! How can I help you today?',
-    user: ChatUser(id: '1', firstName: 'Image Speak'),
+    user: ChatUser(id: '1', firstName: 'ImageSpeak'),
     createdAt: DateTime.now(),
   );
 
@@ -160,7 +179,7 @@ class _ChatPageState extends State<ChatPage> {
       home: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('VizAssist: Chat'),
+          title: const Text('ImageSpeak: Chat'),
         ),
         body: isListening
             ? Center(
@@ -220,9 +239,10 @@ class _ChatPageState extends State<ChatPage> {
 
     // Send the API request with the message and file (if any)
     String? responseText;
-    responseText = await _sendApiRequest(userMessage, file);
+    responseText = await _sendApiRequest(userMessage, file, widget.destinationLanguage);
     print("responseText: $responseText");
-    speak(responseText);
+    responseText = await performTranslation(widget.destinationLanguage, responseText);
+    speak(responseText, widget.destinationLanguage);
 
     // Create a response message and add it to the list
     ChatMessage responseMessage = ChatMessage(
@@ -238,7 +258,7 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  Future<String> _sendApiRequest(ChatMessage chatMessage, File file) async {
+  Future<String> _sendApiRequest(ChatMessage chatMessage, File file, des) async {
     var uri = Uri.parse('https://9b20-34-141-167-252.ngrok-free.app/chat');
     uri = uri.replace(queryParameters: {
       'prompt': chatMessage.text,
@@ -251,8 +271,6 @@ class _ChatPageState extends State<ChatPage> {
     var res = await http.Response.fromStream(streamedResponse);
     var responseBody = json.decode(res.body);
     String text = responseBody['content'];
-    String dest = 'hi';
-    text = await performTranslation(dest,text);
     if (res.statusCode == 200) {
       print("Uploaded!");
       print("Response: $text");

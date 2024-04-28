@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
-speak(String text) async {
+speak(String text, String dest) async {
   final FlutterTts flutterTts = FlutterTts();
 
   await flutterTts.getEngines;
@@ -26,10 +26,19 @@ speak(String text) async {
     print("Language is not available");
   }
 
-  await flutterTts.isLanguageInstalled("ja-JP");
+  // await flutterTts.isLanguageInstalled("ja-JP");
   await flutterTts.setPitch(1.25);
-  await flutterTts.setVoice({"name": "Karen", "locale": "ja-JP"});
-  await flutterTts.setLanguage("ja-JP");
+  if(dest == 'ja') {
+    await flutterTts.setVoice({"name": "Karen", "locale": "ja-JP"});
+    await flutterTts.setLanguage("ja-JP");
+  }
+  else if(dest == 'hi') {
+    await flutterTts.setVoice({"name": "Karen", "locale": "hi-IN"});
+    await flutterTts.setLanguage("hi-IN");
+  }
+  else {
+    await flutterTts.setLanguage("en-US");
+  }
   await flutterTts.speak(text); // नमस्ते
 }
 
@@ -76,7 +85,7 @@ class RequestResult {
   RequestResult(this.text, this.title);
 }
 
-Future<RequestResult> makeRequest(path, File file) async {
+Future<RequestResult> makeRequest(path, File file, dest) async {
   var request = http.MultipartRequest(
       'POST', Uri.parse('https://9b20-34-141-167-252.ngrok-free.app/caption'));
   request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
@@ -88,9 +97,9 @@ Future<RequestResult> makeRequest(path, File file) async {
   if (res.statusCode == 200) {
     print("Uploaded!");
     print("Title: $title");
-    title = await performTranslation('ja', title);
+    title = await performTranslation(dest, title);
     print("Translated Title: $title");
-    speak(title);
+    speak(title, dest);
     return RequestResult('', title);
   } else {
     print("Failed to upload");
@@ -113,7 +122,7 @@ class _DetailsPageState extends State<DetailsPage> {
   Future<void> _initializeRequest() async {
     // Call your async function here
     RequestResult requestResult =
-        await makeRequest(widget.imagePath, widget.imageFile);
+        await makeRequest(widget.imagePath, widget.imageFile, widget.destinationLanguage);
     setState(() {
       result = requestResult;
       String ans = result.title;
@@ -139,7 +148,7 @@ class _DetailsPageState extends State<DetailsPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChatPage(imageFile: widget.imageFile, initialMessage: "",),
+              builder: (context) => ChatPage(imageFile: widget.imageFile, initialMessage: "", destinationLanguage: widget.destinationLanguage),
             ),
           );
         }
@@ -238,7 +247,7 @@ class _DetailsPageState extends State<DetailsPage> {
                                           width: 0,
                                         ),
                                         InkWell(
-                                          onTap: () => speak(result.title),
+                                          onTap: () => speak(result.title, widget.destinationLanguage),
                                           child: const Icon(
                                             Icons.volume_up,
                                             color: Colors.white70,

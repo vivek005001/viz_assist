@@ -10,7 +10,6 @@ import 'package:translator/translator.dart';
 import 'chat.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 speak(String text, String dest) async {
   final FlutterTts flutterTts = FlutterTts();

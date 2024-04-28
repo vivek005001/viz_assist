@@ -62,8 +62,6 @@ dependencies:
   lottie: ^3.0.0
   translator: ^1.0.0
   animated_text_kit: ^4.2.2
-  krutidevtounicode: ^1.0.2
-  text_to_speech: ^0.2.3
 
 dev_dependencies:
   flutter_test:

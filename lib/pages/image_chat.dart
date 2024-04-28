@@ -239,7 +239,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<String> _sendApiRequest(ChatMessage chatMessage, File file) async {
-    var uri = Uri.parse('https://9ad7-34-87-61-161.ngrok-free.app/chat');
+    var uri = Uri.parse('https://6fa9-35-240-251-114.ngrok-free.app/chat');
     uri = uri.replace(queryParameters: {
       'prompt': chatMessage.text,
     });

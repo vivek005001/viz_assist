@@ -169,14 +169,14 @@ class _HomePageState extends State<HomePage> {
                 "Empowering the visually impaired with the language of images, providing access to a world of visual information through spoken captions",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
+                  fontSize: 18,
                   color: Colors.grey.shade600,
                 ),
               ),
             ),
             Padding(
               padding: EdgeInsets.only(
-                  top: 100), // Adjust the top padding value as needed
+                  top: 65), // Adjust the top padding value as needed
               child: Container(
                 alignment: Alignment.center,
                 child: Lottie.asset(
@@ -198,6 +198,7 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(
                   vertical: verticalPadding, horizontal: horizontalPadding),
               child: Text(
+                textAlign: TextAlign.center,
                 "Double Tap Anywhere to Enable Camera",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -206,31 +207,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            // grid
-            // Expanded(
-            //   child: GridView.builder(
-            //     itemCount: 4,
-            //     physics: const NeverScrollableScrollPhysics(),
-            //     padding: const EdgeInsets.symmetric(horizontal: 20),
-            //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            //       crossAxisCount: 2,
-            //       childAspectRatio: 1 / 1.3,
-            //     ),
-            //     itemBuilder: (context, index) {
-            //       // Check if index is 0 or 1, if yes, set transparent color
-            //       final color =
-            //           index == 1 || index == 2 ? Colors.transparent : null;
-            //       // return SmartDeviceBox(
-            //       //   smartDeviceName: mySmartDevices[index][0],
-            //       //   iconPath: mySmartDevices[index][1],
-            //       //   powerOn: mySmartDevices[index][2],
-            //       //   onChanged: (value) => powerSwitchChanged(value, index),
-            //       //   index: index,
-            //       //   customColor: color,
-            //       // );
-            //     },
-            //   ),
-            // )
           ],
         ),
       ),

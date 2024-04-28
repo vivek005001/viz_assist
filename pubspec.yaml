@@ -59,6 +59,11 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   animated_splash_screen:
   shake: ^2.2.0
+  lottie: ^3.0.0
+  translator: ^1.0.0
+  animated_text_kit: ^4.2.2
+  krutidevtounicode: ^1.0.2
+  text_to_speech: ^0.2.3
 
 dev_dependencies:
   flutter_test:
@@ -68,8 +73,8 @@ flutter_icons:
   android: true
   ios: true
   image_path: "lib/icons/icon.png"
-#  adaptive_icon_background: "lib/icons/IconBg.png"
-#  adaptive_icon_foreground: "lib/icons/IconFg.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "lib/icons/icon.png"
 
 
 
@@ -88,6 +93,7 @@ flutter:
 
   assets:
     - lib/icons/
+    - assets/animations/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -2,16 +2,66 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:translator/translator.dart';
+
+
+speak(String text, String dest) async {
+  final FlutterTts flutterTts = FlutterTts();
+
+  await flutterTts.getEngines;
+
+  List<dynamic> languages = await flutterTts.getLanguages;
+  print(languages);
+  var isLanguageAvailable = await flutterTts.isLanguageAvailable('ja-JP');
+  if(isLanguageAvailable) {
+    print("Language is available");
+  } else {
+    print("Language is not available");
+  }
+
+  // await flutterTts.isLanguageInstalled("ja-JP");
+  await flutterTts.setPitch(1.25);
+  if(dest == 'ja') {
+    await flutterTts.setVoice({"name": "Karen", "locale": "ja-JP"});
+    await flutterTts.setLanguage("ja-JP");
+  }
+  else if(dest == 'hi') {
+    await flutterTts.setVoice({"name": "Karen", "locale": "hi-IN"});
+    await flutterTts.setLanguage("hi-IN");
+  }
+  else {
+    await flutterTts.setLanguage("en-US");
+  }
+  await flutterTts.speak(text); // नमस्ते
+}
+
+Future<String> translate(String src, String dest, String input) async {
+  GoogleTranslator translator = GoogleTranslator();
+  String output = "";
+  var translation = await translator.translate(input, from: src, to: dest);
+  output = translation.text.toString();
+  print("object");
+  if (src == '--' || dest == '--') {
+    output = 'Fail to translate';
+  }
+  return output;
+}
+
+Future<String> performTranslation(String dest,String inp) async {
+  return await translate('en', dest, inp);
+}
 
 class ChatPage extends StatefulWidget {
   const ChatPage(
-      {Key? key, required this.imageFile, required this.initialMessage})
+      {Key? key, required this.imageFile, required this.initialMessage, required this.destinationLanguage})
       : super(key: key);
   final File imageFile;
   final String initialMessage;
+  final String destinationLanguage;
 
   @override
   State<ChatPage> createState() => _ChatPageState();
@@ -20,15 +70,68 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   List<ChatMessage> messages = [];
 
-  ChatUser currentUser = ChatUser(id: '0', firstName: 'Me');
+  // String output = "";
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   performTranslation();
+  // }
+
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool isListening = false;
+  String _text = 'Press the button and start speaking';
+  double _confidence = 1.0;
+
+  void _listen() async {
+    if (!isListening) {
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus: $val'),
+        onError: (val) => print('onError: $val'),
+      );
+      if (available) {
+        setState(() => isListening = true);
+        String recognizedText = '';
+        _speech.listen(
+          onResult: (val) {
+            setState(() async {
+              recognizedText = val.recognizedWords;
+              print("RECOGNIZED: $recognizedText");
+              if (val.finalResult) {
+                ChatMessage newMessage = ChatMessage(
+                  text: recognizedText,
+                  user: currentUser,
+                  createdAt: DateTime.now(),
+                );
+                _sendMessage(newMessage);
+                setState(() => isListening = false);
+                recognizedText = ''; // Reset the recognized text
+                if (val.hasConfidenceRating && val.confidence > 0) {
+                  _confidence = val.confidence;
+                }
+              }
+            });
+          },
+        );
+      }
+    } else {
+      setState(() => isListening = false);
+      _speech.stop();
+    }
+  }
+
+  ChatUser currentUser = ChatUser(
+    id: '0',
+    firstName: 'Me',
+  );
   ChatUser queryBot = ChatUser(
       id: '1',
-      firstName: 'VizAssist',
+      firstName: 'ImageSpeak',
       profileImage:
           'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png'); // Add a profile image
   ChatMessage initialChatMessage = ChatMessage(
     text: 'Hello! How can I help you today?',
-    user: ChatUser(id: '1', firstName: 'VizAssist'),
+    user: ChatUser(id: '1', firstName: 'ImageSpeak'),
     createdAt: DateTime.now(),
   );
 
@@ -37,51 +140,11 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _initializeChat();
-  }
-
-  Future<void> _initializeChat() async {
-    setState(() {
-      isLoading = true; // Set loading state to true before sending API request
-    });
-    // Create the initial message
-    ChatMessage initialMessage = ChatMessage(
-      text: widget.initialMessage,
-      user: currentUser,
-      createdAt: DateTime.now(),
+    _speech.initialize(
+      onStatus: (val) => print('onStatus: $val'),
+      onError: (val) => print('onError: $val'),
     );
-
-    // Add the initial message to the list
-    setState(() {
-      messages.insert(0, initialMessage);
-    });
-
-    // Check if the message contains a file
-    File? file = widget.imageFile;
-
-    try {
-      // Send the API request with the initial message and file (if any)
-      String? responseText = await _sendApiRequest(initialMessage, file);
-      print("responseText: $responseText");
-
-      // Create a response message based on the API response
-      ChatMessage responseMessage = ChatMessage(
-        text: responseText ?? "No response from API",
-        user: queryBot,
-        createdAt: DateTime.now(),
-      );
-
-      // Add the response message to the list
-      setState(() {
-        messages.insert(0, responseMessage);
-      });
-    } catch (error) {
-      print("Error sending initial message: $error");
-    } finally {
-      setState(() {
-        isLoading = false; // Set loading state to false after API request is completed
-      });
-    }
+    _listen();
   }
 
   @override
@@ -96,17 +159,39 @@ class _ChatPageState extends State<ChatPage> {
           .copyWith(background: Colors.grey[900]),
     );
 
-    return MaterialApp(
+    return GestureDetector(
+      onPanUpdate: (details) {
+        // Swiping in right direction.
+        if (details.delta.dx > 0) {
+          Navigator.pop(context);
+        }
+
+        // Swiping in left direction.
+        if (details.delta.dx < 0) {
+          isListening = false;
+          _listen();
+        }
+      },
+      child: MaterialApp(
       title: 'VizAssist',
       debugShowCheckedModeBanner: false,
       theme: darkTheme, // Apply the dark theme
       home: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('VizAssist: Chat'),
+          title: const Text('ImageSpeak: Chat'),
         ),
-        body: _buildUI(),
+        body: isListening
+            ? Center(
+                child:
+                LoadingAnimationWidget.waveDots(
+                  color: Colors.white,
+                  size: 100,
+                ), // Replace with your desired animation
+              )
+            : _buildUI(),
       ),
+    ),
     );
   }
 
@@ -120,15 +205,18 @@ class _ChatPageState extends State<ChatPage> {
       );
     }
     return DashChat(
-        inputOptions: InputOptions(trailing: [
+      inputOptions: InputOptions(
+        trailing: [
           IconButton(
-            icon: const Icon(Icons.mic, color: Colors.white),
+            icon: Icon(isListening ? Icons.mic : Icons.mic_none,
+                color: Colors.white),
             onPressed: _listen,
           ),
-        ]),
-        currentUser: currentUser,
-        onSend: _sendMessage,
-        messages: messages
+        ],
+      ),
+      currentUser: currentUser,
+      onSend: _sendMessage,
+      messages: messages,
     );
   }
 
@@ -151,8 +239,11 @@ class _ChatPageState extends State<ChatPage> {
 
     // Send the API request with the message and file (if any)
     String? responseText;
-    responseText = await _sendApiRequest(userMessage, file);
+    responseText = await _sendApiRequest(userMessage, file, widget.destinationLanguage);
     print("responseText: $responseText");
+    if(widget.destinationLanguage != 'en')
+      responseText = await performTranslation(widget.destinationLanguage, responseText);
+    speak(responseText, widget.destinationLanguage);
 
     // Create a response message and add it to the list
     ChatMessage responseMessage = ChatMessage(
@@ -162,13 +253,14 @@ class _ChatPageState extends State<ChatPage> {
     );
 
     setState(() {
-      isLoading = false; // Set loading state to false after API request is completed
+      isLoading =
+          false; // Set loading state to false after API request is completed
       messages.insert(0, responseMessage);
     });
   }
 
-  Future<String> _sendApiRequest(ChatMessage chatMessage, File file) async {
-    var uri = Uri.parse('https://54e2-34-41-36-138.ngrok-free.app/chat');
+  Future<String> _sendApiRequest(ChatMessage chatMessage, File file, des) async {
+    var uri = Uri.parse('https://79a4-34-125-213-165.ngrok-free.app/chat');
     uri = uri.replace(queryParameters: {
       'prompt': chatMessage.text,
     });
@@ -190,30 +282,6 @@ class _ChatPageState extends State<ChatPage> {
       print("Server response: $res");
     }
     return 'text';
-  }
-
-  // function for speech to text
-  void _listen() async {
-    final stt.SpeechToText speech = stt.SpeechToText();
-    bool available = await speech.initialize(
-      onStatus: (val) => print('onStatus: $val'),
-      onError: (val) => print('onError: $val'),
-    );
-    if (available) {
-      speech.listen(
-        onResult: (val) => setState(() {
-          messages.insert(
-              0,
-              ChatMessage(
-                text: val.recognizedWords,
-                user: currentUser,
-                createdAt: DateTime.now(),
-              ));
-        }),
-      );
-    } else {
-      print("The user has denied the use of speech recognition.");
-    }
   }
 }
 

@@ -1,9 +1,25 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_speak/pages/camera_page.dart';
+import '../utils/translation_page.dart';
+import 'package:lottie/lottie.dart';
 import '/utils/smart_device_box.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:translator/translator.dart';
+
+speak(String text) async {
+  final FlutterTts flutterTts = FlutterTts();
+  await flutterTts.setLanguage("en-US");
+  await flutterTts.setPitch(1.25);
+  await flutterTts.speak(text);
+}
+
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key, required this.cameras});
+  final List<CameraDescription> cameras;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -13,56 +29,90 @@ class _HomePageState extends State<HomePage> {
   // padding constants
   final double horizontalPadding = 40;
   final double verticalPadding = 25;
+  String output = "";
+  String selectedLanguage = 'en';
+  String? destinationLanguage = 'en'; // Initialize with en
+  String destCopy = 'en';
 
-  // list of smart devices
-  List mySmartDevices = [
-    // [ smartDeviceName, iconPath , powerStatus ]
-    ["Use Camera", "lib/icons/camera.png", false],
-    ["", "lib/icons/use_camera.png", false],
-    ["", "lib/icons/fan.png", false],
-    ["Upload Image", "lib/icons/document.png", false],
+  // List of language options
+  final List<Map<String, String>> languages = [
+    {'name': 'English ', 'code': 'en'},
+    {'name': 'Hindi ', 'code': 'hi'},
+    {'name': 'Japanese ', 'code': 'ja'},
   ];
 
-  // power button switched
-  void powerSwitchChanged(bool value, int index) {
-    setState(() {
-      mySmartDevices[index][2] = value;
-    });
+  @override
+  void initState() {
+    speak("Welcome to ImageSpeak. Double tap anywhere to enable camera");
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // app bar
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-                vertical: verticalPadding,
+    return GestureDetector(
+      onDoubleTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CameraPage(cameras: widget.cameras, destinationLanguage: destCopy),
+          ),
+        );
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0D0D0D),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // app bar
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding,
+                  vertical: verticalPadding,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // menu icon
+                    Image.asset(
+                      'lib/icons/menu.png',
+                      height: 45,
+                    ),
+                    // account icon
+                    Theme(
+                      data: ThemeData(
+                        canvasColor: Colors.black,
+                      ),
+                      child: DropdownButton<String>(
+                        value: destinationLanguage, // Set the currently selected language
+                        focusColor: Colors.blueAccent,
+                        icon: Icon(
+                          Icons.translate,
+                          color: const Color(0xFF4D96AF),
+                        ),
+                        items: languages.map((language) {
+                          return DropdownMenuItem<String>(
+                            value: language['code'],
+                            child: Text(
+                              language['name']!,
+                              style: TextStyle(
+                                color: const Color(0xFF4D96AF),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? value) {
+                          setState(() {
+                            destinationLanguage = value; // Update destinationLanguage with the selected value
+                            destCopy = value!;
+                          });
+                          print(destinationLanguage);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // menu icon
-                  Image.asset(
-                    'lib/icons/menu.png',
-                    height: 45,
-                    // color: Colors.grey[800],
-                  ),
-
-                  // account icon
-                  const Icon(
-                    Icons.person,
-                    size: 45,
-                    color: Color(0xFF539FB8),
-                  )
-                ],
-              ),
-            ),
 
             const SizedBox(height: 20),
 
@@ -71,17 +121,25 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Text(
-                    "Welcome Home,",
+                    'Hello',
                     style: TextStyle(fontSize: 20, color: Colors.grey.shade700),
                   ),
-                  Text(
-                    'Luv Sharma',
-                    style: TextStyle(
-                      fontFamily: GoogleFonts.bebasNeue().fontFamily,
-                      fontSize: 56,
-                      color: const Color(0xFF4D96AF),
+                  Container(
+                    child: AnimatedTextKit(
+                      animatedTexts: [
+                        TyperAnimatedText(
+                          'Vivek Aggarwal',
+                          textStyle: TextStyle(
+                            fontFamily: GoogleFonts.bebasNeue().fontFamily,
+                            fontSize: 62,
+                            color: const Color(0xFF4D96AF),
+                          ),
+                          speed: const Duration(milliseconds: 150),
+                        ),
+                      ],
+                      totalRepeatCount: 1,
                     ),
                   ),
                 ],
@@ -104,43 +162,55 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: Text(
-                "UTILITY FEATURES",
+                "IMAGE SPEAK",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: Colors.grey.shade800,
+                  fontSize: 30,
+                  color: Colors.white,
                 ),
               ),
             ),
             const SizedBox(height: 10),
-
-            // grid
-            Expanded(
-              child: GridView.builder(
-                itemCount: 4,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1 / 1.3,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              child: Text(
+                "Empowering the visually impaired with the language of images, providing access to a world of visual information through spoken captions",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.grey.shade600,
                 ),
-                itemBuilder: (context, index) {
-                  // Check if index is 0 or 1, if yes, set transparent color
-                  final color =
-                      index == 1 || index == 2 ? Colors.transparent : null;
-                  return SmartDeviceBox(
-                    smartDeviceName: mySmartDevices[index][0],
-                    iconPath: mySmartDevices[index][1],
-                    powerOn: mySmartDevices[index][2],
-                    onChanged: (value) => powerSwitchChanged(value, index),
-                    index: index,
-                    customColor: color,
-                  );
-                },
               ),
-            )
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: 65), // Adjust the top padding value as needed
+              child: Container(
+                alignment: Alignment.center,
+                child: Lottie.asset(
+                  "assets/animations/camera.json",
+                  repeat: true,
+                  height: 80,
+                  width: 80,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: verticalPadding, horizontal: horizontalPadding),
+              child: Text(
+                textAlign: TextAlign.center,
+                "Double Tap Anywhere to Enable Camera",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ),
           ],
         ),
+      ),
       ),
     );
   }

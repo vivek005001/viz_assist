@@ -17,10 +17,10 @@ speak(String text) async {
   await flutterTts.speak(text);
 }
 
-
 class CameraPage extends StatefulWidget {
   final List<CameraDescription> cameras;
-  const CameraPage({super.key, required this.cameras});
+  const CameraPage({super.key, required this.cameras, required this.destinationLanguage});
+  final String destinationLanguage;
 
   @override
   State<CameraPage> createState() => _CameraPageState();
@@ -79,6 +79,7 @@ class _CameraPageState extends State<CameraPage> {
         builder: (context) => DetailsPage(
           imagePath: file.path,
           imageFile: file,
+          destinationLanguage: widget.destinationLanguage,
         ),
       ),
     );
@@ -96,24 +97,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     startCamera(0);
-    speak("Shake your phone or Double tap on the screen to take a picture");
-    ShakeDetector detector = ShakeDetector.autoStart(
-      onPhoneShake: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Shake!'),
-          ),
-        );
-        takePicture();
-        // Do stuff on phone shake
-      },
-      minimumShakeCount: 1,
-      shakeSlopTimeMS: 500,
-      shakeCountResetTime: 3000,
-      shakeThresholdGravity: 2.7,
-    );
-
-    detector.startListening();
+    speak("Double tap on the screen or press the Camera button to take a picture");
     super.initState();
   }
 

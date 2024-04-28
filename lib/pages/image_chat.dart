@@ -241,7 +241,8 @@ class _ChatPageState extends State<ChatPage> {
     String? responseText;
     responseText = await _sendApiRequest(userMessage, file, widget.destinationLanguage);
     print("responseText: $responseText");
-    responseText = await performTranslation(widget.destinationLanguage, responseText);
+    if(widget.destinationLanguage != 'en')
+      responseText = await performTranslation(widget.destinationLanguage, responseText);
     speak(responseText, widget.destinationLanguage);
 
     // Create a response message and add it to the list
@@ -259,7 +260,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<String> _sendApiRequest(ChatMessage chatMessage, File file, des) async {
-    var uri = Uri.parse('https://9b20-34-141-167-252.ngrok-free.app/chat');
+    var uri = Uri.parse('https://79a4-34-125-213-165.ngrok-free.app/chat');
     uri = uri.replace(queryParameters: {
       'prompt': chatMessage.text,
     });

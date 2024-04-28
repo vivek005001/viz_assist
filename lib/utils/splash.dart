@@ -19,7 +19,7 @@ class _SplashState extends State<Splash> {
 
   _navigateToHome() async {
     await Future.delayed(
-        Duration(milliseconds: 1500)); // Adjust delay duration as needed
+        Duration(milliseconds: 750)); // Adjust delay duration as needed
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => HomePage(cameras: widget.cameras,)));
   }

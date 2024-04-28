@@ -87,7 +87,7 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file, dest) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://9b20-34-141-167-252.ngrok-free.app/caption'));
+      'POST', Uri.parse('https://79a4-34-125-213-165.ngrok-free.app/caption'));
   request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();
@@ -97,7 +97,8 @@ Future<RequestResult> makeRequest(path, File file, dest) async {
   if (res.statusCode == 200) {
     print("Uploaded!");
     print("Title: $title");
-    title = await performTranslation(dest, title);
+    if(dest != 'en')
+      title = await performTranslation(dest, title);
     print("Translated Title: $title");
     speak(title, dest);
     return RequestResult('', title);

@@ -31,8 +31,8 @@ class _HomePageState extends State<HomePage> {
   final double verticalPadding = 25;
   String output = "";
   String selectedLanguage = 'en';
-  String? destinationLanguage = null; // Initialize with null
-  String destCopy = "";
+  String? destinationLanguage = 'en'; // Initialize with en
+  String destCopy = 'en';
 
   // List of language options
   final List<Map<String, String>> languages = [

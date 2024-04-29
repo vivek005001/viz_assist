@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_speak/pages/image_chat.dart';
 import 'package:image_speak/pages/voice_chat.dart';
-import 'package:krutidevtounicode/krutidevtounicode.dart';
-import 'package:text_to_speech/text_to_speech.dart';
 import 'package:translator/translator.dart';
 import 'chat.dart';
 import 'package:http/http.dart' as http;

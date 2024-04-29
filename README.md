@@ -10,7 +10,7 @@ who are blind or visually impaired.
 The participants were required to integrate the developed model into a mobile application, allowing users to capture
 images and receive descriptive captions in real-time.
 
-## Demo
+## Demo Video (Click to Play)
 
 
 [<img src="https://github.com/vivek005001/viz_assist/assets/126661857/838ae310-d472-4d24-a9dd-02dbe3f327ee" width="50%">](https://drive.google.com/file/d/1697RzDLYUuGHsjkrf8EnJh2x4DzD74EK/view)

@@ -3,11 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:image_speak/pages/image_chat.dart';
-import 'package:image_speak/pages/voice_chat.dart';
 import 'package:translator/translator.dart';
-import 'chat.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'constants.dart';
 
 speak(String text, String dest) async {
   final FlutterTts flutterTts = FlutterTts();
@@ -84,7 +83,7 @@ class RequestResult {
 
 Future<RequestResult> makeRequest(path, File file, dest) async {
   var request = http.MultipartRequest(
-      'POST', Uri.parse('https://79a4-34-125-213-165.ngrok-free.app/caption'));
+      'POST', Uri.parse(CAPTION_API_URL));
   request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(),
       filename: file.path.split('/').last));
   var streamedResponse = await request.send();

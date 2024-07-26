@@ -1,13 +1,10 @@
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:external_path/external_path.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:media_scanner/media_scanner.dart';
-import 'package:path_provider/path_provider.dart';
-import 'image_details.dart';
-import 'package:shake/shake.dart';
+import 'image_caption.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 speak(String text) async {

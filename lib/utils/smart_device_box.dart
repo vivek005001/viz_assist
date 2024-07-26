@@ -3,7 +3,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:image_picker/image_picker.dart';
-// import '../pages/image_details.dart';
+// import '../pages/image_caption.dart';
 // import '/pages/camera_page.dart';
 //
 // class SmartDeviceBox extends StatelessWidget {

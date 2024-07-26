@@ -7,17 +7,16 @@ import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:translator/translator.dart';
-
+import 'constants.dart';
 
 speak(String text, String dest) async {
   final FlutterTts flutterTts = FlutterTts();
-
   await flutterTts.getEngines;
 
   List<dynamic> languages = await flutterTts.getLanguages;
   print(languages);
   var isLanguageAvailable = await flutterTts.isLanguageAvailable('ja-JP');
-  if(isLanguageAvailable) {
+  if (isLanguageAvailable) {
     print("Language is available");
   } else {
     print("Language is not available");
@@ -25,15 +24,13 @@ speak(String text, String dest) async {
 
   // await flutterTts.isLanguageInstalled("ja-JP");
   await flutterTts.setPitch(1.25);
-  if(dest == 'ja') {
+  if (dest == 'ja') {
     await flutterTts.setVoice({"name": "Karen", "locale": "ja-JP"});
     await flutterTts.setLanguage("ja-JP");
-  }
-  else if(dest == 'hi') {
+  } else if (dest == 'hi') {
     await flutterTts.setVoice({"name": "Karen", "locale": "hi-IN"});
     await flutterTts.setLanguage("hi-IN");
-  }
-  else {
+  } else {
     await flutterTts.setLanguage("en-US");
   }
   await flutterTts.speak(text); // नमस्ते
@@ -51,13 +48,16 @@ Future<String> translate(String src, String dest, String input) async {
   return output;
 }
 
-Future<String> performTranslation(String dest,String inp) async {
+Future<String> performTranslation(String dest, String inp) async {
   return await translate('en', dest, inp);
 }
 
 class ChatPage extends StatefulWidget {
   const ChatPage(
-      {Key? key, required this.imageFile, required this.initialMessage, required this.destinationLanguage})
+      {Key? key,
+      required this.imageFile,
+      required this.initialMessage,
+      required this.destinationLanguage})
       : super(key: key);
   final File imageFile;
   final String initialMessage;
@@ -69,14 +69,6 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   List<ChatMessage> messages = [];
-
-  // String output = "";
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   performTranslation();
-  // }
 
   final stt.SpeechToText _speech = stt.SpeechToText();
   bool isListening = false;
@@ -126,12 +118,12 @@ class _ChatPageState extends State<ChatPage> {
   );
   ChatUser queryBot = ChatUser(
       id: '1',
-      firstName: 'ImageSpeak',
+      firstName: 'VizAssist',
       profileImage:
           'https://w1.pngwing.com/pngs/278/853/png-transparent-line-art-nose-chatbot-internet-bot-artificial-intelligence-snout-head-smile-black-and-white.png'); // Add a profile image
   ChatMessage initialChatMessage = ChatMessage(
     text: 'Hello! How can I help you today?',
-    user: ChatUser(id: '1', firstName: 'ImageSpeak'),
+    user: ChatUser(id: '1', firstName: 'VizAssist'),
     createdAt: DateTime.now(),
   );
 
@@ -173,25 +165,24 @@ class _ChatPageState extends State<ChatPage> {
         }
       },
       child: MaterialApp(
-      title: 'VizAssist',
-      debugShowCheckedModeBanner: false,
-      theme: darkTheme, // Apply the dark theme
-      home: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('ImageSpeak: Chat'),
+        title: 'VizAssist',
+        debugShowCheckedModeBanner: false,
+        theme: darkTheme, // Apply the dark theme
+        home: Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: const Text('VizAssist: Chat'),
+          ),
+          body: isListening
+              ? Center(
+                  child: LoadingAnimationWidget.waveDots(
+                    color: Colors.white,
+                    size: 100,
+                  ), // Replace with your desired animation
+                )
+              : _buildUI(),
         ),
-        body: isListening
-            ? Center(
-                child:
-                LoadingAnimationWidget.waveDots(
-                  color: Colors.white,
-                  size: 100,
-                ), // Replace with your desired animation
-              )
-            : _buildUI(),
       ),
-    ),
     );
   }
 
@@ -239,10 +230,12 @@ class _ChatPageState extends State<ChatPage> {
 
     // Send the API request with the message and file (if any)
     String? responseText;
-    responseText = await _sendApiRequest(userMessage, file, widget.destinationLanguage);
+    responseText =
+        await _sendApiRequest(userMessage, file, widget.destinationLanguage);
     print("responseText: $responseText");
-    if(widget.destinationLanguage != 'en')
-      responseText = await performTranslation(widget.destinationLanguage, responseText);
+    if (widget.destinationLanguage != 'en')
+      responseText =
+          await performTranslation(widget.destinationLanguage, responseText);
     speak(responseText, widget.destinationLanguage);
 
     // Create a response message and add it to the list
@@ -259,8 +252,9 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  Future<String> _sendApiRequest(ChatMessage chatMessage, File file, des) async {
-    var uri = Uri.parse('https://79a4-34-125-213-165.ngrok-free.app/chat');
+  Future<String> _sendApiRequest(
+      ChatMessage chatMessage, File file, des) async {
+    var uri = Uri.parse(CHAT_API_URL);
     uri = uri.replace(queryParameters: {
       'prompt': chatMessage.text,
     });
